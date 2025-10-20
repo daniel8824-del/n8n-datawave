@@ -1,0 +1,1130 @@
+{
+  "name": "Instagram Webhook Step 2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "357bcf57-ea8a-48ab-ad8f-7efc8bf6b05b",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -544,
+        256
+      ],
+      "id": "d423258b-7b8c-4bf8-8276-6120add5497a",
+      "name": "Webhook",
+      "webhookId": "357bcf57-ea8a-48ab-ad8f-7efc8bf6b05b"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f143017e-0ebb-470c-9407-7fa518403955",
+              "name": "Movie",
+              "value": "={{ $json.body.data.properties.Movie.title[0].plain_text }}",
+              "type": "string"
+            },
+            {
+              "id": "8b63e2df-84f0-4d9c-bafe-080f90b84916",
+              "name": "Keywords",
+              "value": "={{ $json.body.data.properties.Keywords.multi_select.map(tag => tag.name.replace('#', '')) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -320,
+        256
+      ],
+      "id": "2ff2a5f1-a3d5-4aa4-bb4f-2413936af023",
+      "name": "Keywords Field"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "87dfd91b-a554-4c30-9ffe-2aa903808ee4",
+              "name": "markdown_file",
+              "value": "={{ $json.output.tags.map(t => `#${t}`).join(' ') }}\n{{ $json.output.content }}",
+              "type": "string"
+            },
+            {
+              "id": "7e78fa76-173f-41da-8066-825723dd586f",
+              "name": "",
+              "value": "=",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1024,
+        432
+      ],
+      "id": "e8512372-ede0-44b4-bbb9-a58aa4624e9a",
+      "name": "Combine Content"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "markdown_file",
+        "options": {
+          "fileName": "={{ $('Zettlekasten Obsidian Note').item.json.output.title }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1248,
+        432
+      ],
+      "id": "a90bea2d-3935-4aed-b23a-8bee498cf6f5",
+      "name": "Create File"
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Zettlekasten Obsidian Note').item.json.output.title }}.md",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1Nla_ZRUIWKJdY2H9jZb7spaekHzE9Ccb",
+          "mode": "list",
+          "cachedResultName": "Note",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1Nla_ZRUIWKJdY2H9jZb7spaekHzE9Ccb"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1472,
+        432
+      ],
+      "id": "9763638e-5729-42db-af03-58f06228c43a",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "BjmMmbCV1dlYbqNW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Create Notion Database",
+        "height": 384,
+        "width": 896
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        96,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "62aa530b-b076-4e86-a272-8df58a03d493",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## All Captions & Hashtgas",
+        "height": 416,
+        "width": 512,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        96,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "aaeafb26-a77c-45ef-ac7e-3413c6fa3d8c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Apify Scraper",
+        "height": 240,
+        "width": 214,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -160,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "73741775-a60a-440a-a97e-9057527eb5a4",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Trigger",
+        "height": 240,
+        "width": 390,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -576,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "5e9838ff-c479-443a-9b1c-cc47cbaccf84",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "28c61622-43bc-8096-92c6-cf54088c72e7",
+          "mode": "list",
+          "cachedResultName": "인스타그램 스크래핑 데이터",
+          "cachedResultUrl": "https://www.notion.so/28c6162243bc809692c6cf54088c72e7"
+        },
+        "title": "인스타그램 스크래핑 데이터",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Movie|title",
+              "title": "={{ $('Keywords Field').item.json.Movie }}"
+            },
+            {
+              "key": "Keywords|multi_select",
+              "multiSelectValue": "={{ $('Keywords Field').item.json.Keywords }}"
+            },
+            {
+              "key": "Caption|rich_text",
+              "textContent": "={{ $json.caption }}"
+            },
+            {
+              "key": "Hashtags|multi_select",
+              "multiSelectValue": "={{ $json.hashtags }}"
+            },
+            {
+              "key": "URL|url",
+              "urlValue": "={{ $json.url }}"
+            },
+            {
+              "key": "Display|files",
+              "fileUrls": {
+                "fileUrl": [
+                  {
+                    "name": "DisplayImage",
+                    "url": "={{ $json.displayUrl }}"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "Likes|number",
+              "numberValue": "={{$json.likesCount === -1 ? 0 : $json.likesCount}}"
+            },
+            {
+              "key": "Comments|number",
+              "numberValue": "={{$json.commentsCount === -1 ? 0 : $json.commentsCount}}"
+            },
+            {
+              "key": "Users|rich_text",
+              "textContent": "={{ $json.ownerFullName }}"
+            },
+            {
+              "key": "ID|rich_text",
+              "textContent": "={{ $json.id }}"
+            },
+            {
+              "key": "Timestamp|date",
+              "date": "={{ new Date($json.timestamp).toISOString().slice(0, 16).replace('T', ' ') }}"
+            },
+            {
+              "key": "Category|select",
+              "selectValue": "={{ $json.sentimentAnalysis.category }}"
+            },
+            {
+              "key": "Strength|number",
+              "numberValue": "={{ $json.sentimentAnalysis.strength }}"
+            },
+            {
+              "key": "Confidence|number",
+              "numberValue": "={{ $json.sentimentAnalysis.confidence }}"
+            },
+            {
+              "key": "Keyword Page|relation",
+              "relationValue": [
+                "={{ $('Webhook').item.json.body.data.id }}"
+              ]
+            }
+          ]
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "type": "heading_2",
+              "textContent": "Movie"
+            },
+            {
+              "textContent": "={{ $('Keywords Field').item.json.Movie }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Keywords"
+            },
+            {
+              "textContent": "={{ $(\"Keywords Field\").item.json.Keywords.map(tag => \"#\" + tag).join(\", \") }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "=Caption"
+            },
+            {
+              "textContent": "={{ $json.caption }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "URL"
+            },
+            {
+              "textContent": "={{ $json.url }}"
+            },
+            {
+              "type": "image",
+              "url": "={{ $json.displayUrl }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Likes"
+            },
+            {
+              "textContent": "={{ ($json.likesCount === -1 ? 0 : $json.likesCount).toString() }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Comments"
+            },
+            {
+              "textContent": "={{ ($json.commentsCount === -1 ? 0 : $json.commentsCount).toString() }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Timestamp"
+            },
+            {
+              "textContent": "={{ new Date($json.timestamp).toISOString().slice(0, 16).replace('T', ' ') }}"
+            }
+          ]
+        },
+        "options": {
+          "iconType": "file",
+          "icon": "=https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/2048px-Instagram_logo_2022.svg.png"
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        16
+      ],
+      "id": "d7b52cea-41a7-4702-aa7a-84eb606c4f1d",
+      "name": "Create a database page",
+      "credentials": {
+        "notionApi": {
+          "id": "1IYH8sk8KrXGZta9",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const captions = items.map(item => {\n  const caption = item.json.caption || \"\";\n  // 해시태그 제거\n  return caption.replace(/#[^\\s#]+/g, '').replace(/\\s+/g, ' ').trim();\n});\n\nconst hashtags = Array.from(\n  new Set(\n    items.flatMap(item => {\n      const caption = item.json.caption || \"\";\n      return caption.match(/#[^\\s#]+/g) || [];\n    })\n  )\n);\n\nreturn [\n  {\n    json: {\n      allCaptions: captions.join('\\n---\\n'),\n      allHashtags: hashtags.join(', ')\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        432
+      ],
+      "id": "1f806140-2e80-4952-8e64-33ea13d6ce95",
+      "name": "Caption Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "const md = $json[\"output\"][\"content\"];\n\n// ----------- Markdown Inline 변환 함수 ----------- //\nfunction mdToRichText(text) {\n  const patterns = [\n    { regex: /\\*\\*(.*?)\\*\\*/, annotation: { bold: true } },\n    { regex: /\\*(.*?)\\*/, annotation: { italic: true } },\n    { regex: /==(.*?)==/, annotation: { color: \"yellow_background\" } }\n  ];\n  let rich = [];\n  let rest = text;\n  while (rest.length > 0) {\n    let minIdx = rest.length;\n    let matchObj = null;\n    let patternObj = null;\n    for (const p of patterns) {\n      const m = p.regex.exec(rest);\n      if (m && m.index < minIdx) {\n        minIdx = m.index;\n        matchObj = m;\n        patternObj = p;\n      }\n    }\n    if (matchObj) {\n      if (matchObj.index > 0) {\n        rich.push({ type: 'text', text: { content: rest.slice(0, matchObj.index) } });\n      }\n      rich.push({\n        type: 'text',\n        text: { content: matchObj[1] },\n        annotations: patternObj.annotation\n      });\n      rest = rest.slice(matchObj.index + matchObj[0].length);\n    } else {\n      if (rest.length > 0) rich.push({ type: 'text', text: { content: rest } });\n      break;\n    }\n  }\n  return rich;\n}\n\n// ----------- 2단계 children만 허용하도록 flatten ----------- //\nfunction safeChildren(children) {\n  if (!children) return;\n  return children.map(child => {\n    if (['bulleted_list_item', 'numbered_list_item'].includes(child.type)) {\n      if (child[child.type].children) {\n        child[child.type].children = child[child.type].children.map(grandChild => {\n          if (grandChild[grandChild.type] && grandChild[grandChild.type].children) {\n            delete grandChild[grandChild.type].children;\n          }\n          return grandChild;\n        });\n      }\n    }\n    return child;\n  });\n}\n\n// ----------- 불릿에 쌍따옴표 여러 개 → children 분리 ----------- //\nfunction splitBulletsWithQuotes(text) {\n  const quotePattern = /\"([^\"]+)\"/g;\n  let matches = [];\n  let match;\n  let lastIndex = 0;\n  let children = [];\n  while ((match = quotePattern.exec(text)) !== null) {\n    matches.push(match[1]);\n    lastIndex = quotePattern.lastIndex;\n  }\n  if (matches.length > 1) {\n    for (let quoted of matches) {\n      children.push({\n        object: 'block',\n        type: 'bulleted_list_item',\n        bulleted_list_item: { rich_text: mdToRichText(quoted) }\n      });\n    }\n    let rest = text.slice(lastIndex).replace(/^[,\\s]+/, '');\n    if (rest.length > 0) {\n      children.push({\n        object: 'block',\n        type: 'bulleted_list_item',\n        bulleted_list_item: { rich_text: mdToRichText(rest) }\n      });\n    }\n    return children;\n  }\n  return null;\n}\n\n// ----------- 본문 블록 변환 ----------- //\nconst lines = md.split('\\n');\nlet blocks = [];\nlet i = 0;\n\nwhile (i < lines.length) {\n  let line = lines[i];\n\n  // 구분선(---)은 무시\n  if (line.trim() === '---') {\n    i++; continue;\n  }\n\n  // Heading\n  if (line.startsWith('### ')) {\n    blocks.push({ object: 'block', type: 'heading_3', heading_3: { rich_text: mdToRichText(line.replace(/^###\\s*/, '')) } });\n    i++; continue;\n  }\n  if (line.startsWith('## ')) {\n    blocks.push({ object: 'block', type: 'heading_2', heading_2: { rich_text: mdToRichText(line.replace(/^##\\s*/, '')) } });\n    i++; continue;\n  }\n  if (line.startsWith('# ')) {\n    blocks.push({ object: 'block', type: 'heading_1', heading_1: { rich_text: mdToRichText(line.replace(/^#\\s*/, '')) } });\n    i++; continue;\n  }\n\n  // 넘버드 리스트 (하위: 불릿/인용/따옴표)\n  if (/^\\d+\\.\\s+/.test(line)) {\n    let numberListBlocks = [];\n    while (i < lines.length && /^\\d+\\.\\s+/.test(lines[i])) {\n      let itemText = lines[i].replace(/^\\d+\\.\\s+/, '').trim();\n      let children = [];\n      let j = i + 1;\n      while (\n        j < lines.length &&\n        (lines[j].trim().startsWith('- ') ||\n         lines[j].trim().startsWith('> ') ||\n         lines[j].trim().match(/^\".*\"$/) ||\n         lines[j].trim().match(/^“.*”$/))\n      ) {\n        let childLine = lines[j].trim();\n        if (childLine.startsWith('- ')) {\n          children.push({\n            object: 'block',\n            type: 'bulleted_list_item',\n            bulleted_list_item: { rich_text: mdToRichText(childLine.replace(/^- /, '').trim()) }\n          });\n        }\n        else if (childLine.startsWith('> ')) {\n          children.push({\n            object: 'block',\n            type: 'quote',\n            quote: { rich_text: mdToRichText(childLine.replace(/^> /, '').trim()) }\n          });\n        }\n        else if (childLine.match(/^\".*\"$/) || childLine.match(/^“.*”$/)) {\n          children.push({\n            object: 'block',\n            type: 'quote',\n            quote: { rich_text: mdToRichText(childLine.replace(/^[\"“]|[\"”]$/g, '').trim()) }\n          });\n        }\n        j++;\n      }\n      let block = {\n        object: 'block',\n        type: 'numbered_list_item',\n        numbered_list_item: { rich_text: mdToRichText(itemText) }\n      };\n      if (children.length > 0) block.numbered_list_item.children = safeChildren(children);\n      numberListBlocks.push(block);\n      i = j;\n    }\n    blocks.push(...numberListBlocks);\n    continue;\n  }\n\n  // 볼드 불릿(상위), children 지원\n  if (/^- \\*\\*(.+?)\\*\\*/.test(line)) {\n    const parentText = line.replace(/^- \\*\\*(.+?)\\*\\*/, '$1').trim();\n    let parentBlock = {\n      object: 'block',\n      type: 'bulleted_list_item',\n      bulleted_list_item: { rich_text: mdToRichText(parentText), children: [] }\n    };\n    let j = i + 1;\n    while (j < lines.length) {\n      let childLine = lines[j];\n      if (/^- (?!\\*\\*)/.test(childLine)) {\n        parentBlock.bulleted_list_item.children.push({\n          object: 'block',\n          type: 'bulleted_list_item',\n          bulleted_list_item: { rich_text: mdToRichText(childLine.replace(/^- /, '').trim()) }\n        });\n        j++; continue;\n      }\n      if (/^> /.test(childLine)) {\n        parentBlock.bulleted_list_item.children.push({\n          object: 'block',\n          type: 'quote',\n          quote: { rich_text: mdToRichText(childLine.replace(/^> /, '').trim()) }\n        });\n        j++; continue;\n      }\n      if (/^\"/.test(childLine.trim())) {\n        parentBlock.bulleted_list_item.children.push({\n          object: 'block',\n          type: 'quote',\n          quote: { rich_text: mdToRichText(childLine.trim().replace(/^\"/, '').replace(/\"$/, '').trim()) }\n        });\n        j++; continue;\n      }\n      if (/^\\d+\\.\\s+/.test(childLine)) {\n        parentBlock.bulleted_list_item.children.push({\n          object: 'block',\n          type: 'numbered_list_item',\n          numbered_list_item: { rich_text: mdToRichText(childLine.replace(/^\\d+\\.\\s+/, '').trim()) }\n        });\n        j++; continue;\n      }\n      if (\n        childLine.trim() === '' ||\n        /^- \\*\\*/.test(childLine) ||\n        /^#{1,3} /.test(childLine) ||\n        /^\\d+\\.\\s+/.test(childLine)\n      ) break;\n      parentBlock.bulleted_list_item.children.push({\n        object: 'block',\n        type: 'paragraph',\n        paragraph: { rich_text: mdToRichText(childLine.trim()) }\n      });\n      j++;\n    }\n    parentBlock.bulleted_list_item.children = safeChildren(parentBlock.bulleted_list_item.children);\n    blocks.push(parentBlock);\n    i = j;\n    continue;\n  }\n\n  // **불릿 계층 구조**\n  if (/^- /.test(line.trim())) {\n    let parentText = line.trim().replace(/^- /, '');\n    // 쌍따옴표 여러 개 → children\n    let splitChildren = splitBulletsWithQuotes(parentText);\n    if (splitChildren) {\n      // 하위 불릿(2칸 이상 들여쓰기)\n      let j = i + 1;\n      let childBullets = [];\n      while (j < lines.length && /^ {2,}- /.test(lines[j])) {\n        childBullets.push({\n          object: 'block',\n          type: 'bulleted_list_item',\n          bulleted_list_item: { rich_text: mdToRichText(lines[j].replace(/^ {2,}- /, '')) }\n        });\n        j++;\n      }\n      blocks.push({\n        object: 'block',\n        type: 'bulleted_list_item',\n        bulleted_list_item: { rich_text: mdToRichText(\"\"), children: safeChildren([...splitChildren, ...childBullets]) }\n      });\n      i = j;\n      continue;\n    }\n    // **2칸 들여쓰기 하위 불릿만 children**\n    let j = i + 1;\n    let childBullets = [];\n    while (j < lines.length && /^ {2,}- /.test(lines[j])) {\n      childBullets.push({\n        object: 'block',\n        type: 'bulleted_list_item',\n        bulleted_list_item: { rich_text: mdToRichText(lines[j].replace(/^ {2,}- /, '')) }\n      });\n      j++;\n    }\n    let parentBlock = {\n      object: 'block',\n      type: 'bulleted_list_item',\n      bulleted_list_item: { rich_text: mdToRichText(parentText) }\n    };\n    if (childBullets.length > 0) {\n      parentBlock.bulleted_list_item.children = safeChildren(childBullets);\n    }\n    blocks.push(parentBlock);\n    i = j;\n    continue;\n  }\n\n  // 표\n  if (line.trim().startsWith('|')) {\n    let tableRows = [];\n    while (i < lines.length && lines[i].trim().startsWith('|')) {\n      tableRows.push(lines[i].trim());\n      i++;\n    }\n    const rows = tableRows.map(row => row.replace(/^\\|/, '').replace(/\\|$/, '').split('|').map(cell => cell.trim()));\n    const tableBlock = {\n      object: 'block',\n      type: 'table',\n      table: {\n        table_width: rows[0].length,\n        has_column_header: true,\n        has_row_header: false,\n        children: rows.slice(2).map(row =>\n          ({\n            object: 'block',\n            type: 'table_row',\n            table_row: {\n              cells: row.map(cell => mdToRichText(cell))\n            }\n          })\n        )\n      }\n    };\n    blocks.push(tableBlock);\n    continue;\n  }\n\n  // Callout\n  if (line.trim().startsWith('> [!')) {\n    const match = line.trim().match(/^\\> \\[\\!(\\w+)\\] (.*)/);\n    const type = match && match[1] ? match[1].toLowerCase() : \"info\";\n    const content = match && match[2] ? match[2] : \"\";\n    const emojiMap = { 'info': 'ℹ️', 'summary': '💡', 'warning': '⚠️' };\n    const emoji = emojiMap[type] || '💬';\n    let calloutText = content;\n    let k = i + 1;\n    let calloutChildren = [];\n    while (lines[k] && lines[k].trim().startsWith('> -')) {\n      calloutChildren.push({\n        object: 'block',\n        type: 'bulleted_list_item',\n        bulleted_list_item: { rich_text: mdToRichText(lines[k].trim().replace(/^>\\s*-\\s*/, '')) }\n      });\n      k++;\n    }\n    let block = {\n      object: 'block',\n      type: 'callout',\n      callout: {\n        icon: { emoji },\n        rich_text: mdToRichText(calloutText),\n        color: 'gray_background'\n      }\n    };\n    if (calloutChildren.length > 0)\n      block.callout.children = safeChildren(calloutChildren);\n    blocks.push(block);\n    i = k;\n    continue;\n  }\n\n  // 인용\n  if (line.trim().startsWith('> ')) {\n    blocks.push({\n      object: 'block',\n      type: 'quote',\n      quote: { rich_text: mdToRichText(line.trim().replace(/^>\\s*/, '')) }\n    });\n    i++; continue;\n  }\n\n  // 인용(공백)\n  if (/^ +/.test(line) && line.trim().length > 0) {\n    blocks.push({\n      object: 'block',\n      type: 'quote',\n      quote: { rich_text: mdToRichText(line.trim()) }\n    });\n    i++; continue;\n  }\n\n  // 일반 텍스트\n  if (line.trim().length > 0) {\n    blocks.push({\n      object: 'block',\n      type: 'paragraph',\n      paragraph: { rich_text: mdToRichText(line.trim()) }\n    });\n    i++; continue;\n  }\n  i++;\n}\n\nreturn [{ json: { children: blocks } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1216,
+        896
+      ],
+      "id": "1cf73872-888b-436c-84db-1927c8f19a2b",
+      "name": "Block Code"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/reGe1ST3OBgYZSsZJ/run-sync-get-dataset-items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"hashtags\": {{ JSON.stringify($json.Keywords) }},\n  \"resultsLimit\": 2,\n  \"resultsType\": \"posts\"\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        256
+      ],
+      "id": "ef8c7e3d-eb77-4257-adbb-a466dcd51fba",
+      "name": "Fetch Apify",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "X7hULh0nYGf8Oasf",
+          "name": "Header Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.caption }}",
+        "options": {
+          "categories": "Positive, Neutral, Negative",
+          "systemPromptTemplate": "You are highly intelligent and accurate sentiment analyzer. Analyze the sentiment of the provided text. Categorize it into one of the following: {categories}. Use the provided formatting instructions. Only output the JSON.",
+          "includeDetailedResults": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.sentimentAnalysis",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        0
+      ],
+      "id": "224963f4-72fe-4543-98c1-e6868f6bcaf6",
+      "name": "Caption Sentiment Analysis"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        192
+      ],
+      "id": "74693044-64e5-47c2-8947-a726395f664d",
+      "name": "OpenAI Model 1",
+      "credentials": {
+        "openAiApi": {
+          "id": "GU4Fc8aV2Jc3O9Mo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.allCaptions }}",
+        "options": {
+          "categories": "Positive, Neutral, Negative",
+          "systemPromptTemplate": "You are highly intelligent and accurate sentiment analyzer. Analyze the sentiment of the provided text. Categorize it into one of the following: {categories}. Use the provided formatting instructions. Only output the JSON.",
+          "includeDetailedResults": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.sentimentAnalysis",
+      "typeVersion": 1.1,
+      "position": [
+        336,
+        416
+      ],
+      "id": "ff7c229a-66a1-4671-8d66-0f008c3ede20",
+      "name": "All Caption Sentiment Analysis"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        624
+      ],
+      "id": "3d59ef48-db2d-4373-8f0d-78d5c8a8e045",
+      "name": "OpenAI Model 2",
+      "credentials": {
+        "openAiApi": {
+          "id": "GU4Fc8aV2Jc3O9Mo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=allCaption: {{ $json.allCaptions }}\nallHashtages: {{ $json.allHashtags }}\nsentimentAnalysis\n- category: {{ $json.sentimentAnalysis.category }}\n- strength: {{ $json.sentimentAnalysis.strength }}\n- confidence: {{ $json.sentimentAnalysis.confidence }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=당신은 매우 꼼꼼하고 창의적인 트렌드 리포트 노트 작성자입니다.  \n누구도 다시는 원본 SNS 데이터를 뒤질 필요 없도록 모든 분석적 인사이트와 근거를 시각적으로 재구성합니다.\n\n당신에게는 다음과 같은 JSON 오브젝트가 입력값으로 주어집니다:\n- allCaptions: SNS 본문(Instagram 등) 전체 텍스트 합본\n- allHashtags: 전체 해시태그\n- (옵션) 감성분석, 키워드, 통계 등 요약 데이터\n\n반드시 아래 규칙을 따르세요:\n\n1. 이 작업은 단순 요약이 아님.\n   - 입력 데이터에 등장하는 모든 수치, 인용, 트렌드, 비교, 해시태그, 문장, 특이사항을 빠짐없이 재구성한다.\n   - 없는 내용은 절대 임의로 만들거나 추가하지 않는다.\n\n2. 섹션 구조/포맷 (아래 예시 중 실제 데이터에 맞게 5~7개를 동적으로 사용):\n   - 핵심 인사이트(Key Insights)\n   - 트렌드 요약(Trend Overview)\n   - 주요 해시태그/키워드 분석(Hashtag/Keyword Analysis)\n   - 대표 게시글/사례(Representative Posts/Examples)\n   - 소비자 반응 분석(Consumer Sentiment Analysis)\n   - 이슈/논란 및 여론 동향(Controversies & Public Discourse)\n   - 비즈니스/마케팅 인사이트(Biz & Marketing Implications)\n   - 향후 전망 및 제언(Future Outlook & Recommendations)\n\n3. 각 섹션마다 다양한 시각적 마크다운 포맷을 순환 사용:  \n   - 콜아웃([!info], [!summary], [!warning] 등)\n   - 콜아웃은 반드시 인용 블록(`> [!info] 제목\\n> - 내용…`) 형태로 사용\n   - 콜아웃은 헤딩(##/###)에는 사용하지 않도록!\n   - 불렛·넘버링 리스트  \n   - 직접 인용 블록  \n   - 표(마크다운 테이블, 들여쓰기X)\n   - 짧은 단락, 강조문장\n   - 절대 두 섹션에서 같은 포맷이 연속되지 않도록!\n   - 불렛 포인트 계층은 2계층까지만\n   - ## <font color=\"#ffc000\">제목</font>\n   - 헤딩(##) 바로 아래에는 ‘공백 줄(엔터 1회)’만 넣고, 절대 두 줄 이상 띄우지 않도록!\n   - 예시\n     ## 헤딩 예시\n\n    > [!info] 콜아웃\n    > - 내용\n\n    ## 다음 헤딩\n\n    - 리스트 항목\n\n4. 모든 내용은 유창하고 전문적인 한국어로만 작성하며,\n   - 기술 용어·고유명사는 원문 병기 가능\n   - 인용/수치/직접적 트렌드 단어/대표 해시태그를 각 섹션에 반드시 포함\n   - 불필요한 광고·안내·감상·설명은 금지\n\n5. 전체 글자 수는 반드시 8,000~10,000자.\n   - 반복이나 수식어로 글자수 채우기 금지\n   - 모든 데이터, 주요 게시글, 키워드, 감성, 사례, 논쟁, 전망 등 ‘실제 자료’로만 내용 구성\n\n6. 출력은 반드시 아래 JSON 구조만 사용:\n\n```json\n{\n  \"id\": \"[고유값]\",\n  \"title\": \"[트렌드 분석 주제의 자연스러운 한글 제목]\",\n  \"content\": \"[계층적 마크다운 구조, 규칙 100% 적용]\",\n  \"tags\": [\"트렌드\", \"키워드\", \"분석\", ...]  // 최대 10개\n}"
+        }
+      },
+      "id": "353f75f3-28b8-4835-9f62-d792f6bd3e0e",
+      "name": "Zettlekasten Obsidian Note",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        704,
+        432
+      ],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=allCaption: {{ $json.allCaptions }}\nallHashtages: {{ $json.allHashtags }}\nsentimentAnalysis\n- category: {{ $json.sentimentAnalysis.category }}\n- strength: {{ $json.sentimentAnalysis.strength }}\n- confidence: {{ $json.sentimentAnalysis.confidence }}\nnotionid: {{ $json.body.data.id }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=당신은 매우 꼼꼼하고 창의적인 트렌드 리포트 노트 작성자입니다.  \n누구도 다시는 원본 SNS 데이터를 뒤질 필요 없도록 모든 분석적 인사이트와 근거를 시각적으로 재구성합니다.\n\n당신에게는 다음과 같은 JSON 오브젝트가 입력값으로 주어집니다:\n- allCaptions: SNS 본문(Instagram 등) 전체 텍스트 합본\n- allHashtags: 전체 해시태그\n- (옵션) 감성분석, 키워드, 통계 등 요약 데이터\n\n반드시 아래 규칙을 따르세요:\n\n1. 이 작업은 단순 요약이 아님.\n   - 입력 데이터에 등장하는 모든 수치, 인용, 트렌드, 비교, 주요 해시태그, 직접적 문장, 특이사항을 빠짐없이 재구성한다.\n   - 없는 내용은 절대 임의로 만들거나 추가하지 않는다.\n\n2. 섹션 구조/포맷 (아래 예시 중 실제 데이터에 맞게 5~7개를 동적으로 사용):\n   - 핵심 인사이트(Key Insights)\n   - 트렌드 요약(Trend Overview)\n   - 주요 해시태그/키워드 분석(Hashtag/Keyword Analysis)\n   - 대표 게시글/사례(Representative Posts/Examples)\n   - 소비자 반응 분석(Consumer Sentiment Analysis)\n   - 이슈/논란 및 여론 동향(Controversies & Public Discourse)\n   - 비즈니스/마케팅 인사이트(Biz & Marketing Implications)\n   - 향후 전망 및 제언(Future Outlook & Recommendations)\n\n3. 각 섹션마다 다양한 시각적 마크다운 포맷을 순환 사용:  \n   - 콜아웃([!info], [!summary], [!warning] 등)\n   - 콜아웃은 반드시 인용 블록(`> [!info] 제목\\n> - 내용…`) 형태로 사용\n   - 콜아웃은 헤딩(##/###)에는 사용하지 않도록!\n   - 불렛·넘버링 리스트  \n   - 직접 인용 블록  \n   - 표(마크다운 테이블, 들여쓰기X)\n   - 짧은 단락, 강조문장\n   - 절대 두 섹션에서 같은 포맷이 연속되지 않도록!\n\n4. 모든 내용은 유창하고 전문적인 한국어로만 작성하며,\n   - 기술 용어·고유명사는 원문 병기 가능\n   - 인용/수치/직접적 트렌드 단어/대표 해시태그를 각 섹션에 반드시 포함\n   - 불필요한 광고·안내·감상·설명은 금지\n\n5. 전체 글자 수는 반드시 8,000~10,000자.\n   - 반복이나 수식어로 글자수 채우기 금지\n   - 모든 데이터, 주요 게시글, 키워드, 감성, 사례, 논쟁, 전망 등 ‘실제 자료’로만 내용 구성\n\n6. Notion 자동화/블록 변환을 위해 반드시 추가로 지켜야 할 사항\n   - \"content\" 필드는 Notion 마크다운 파서/블록 자동 변환에 100% 적합하도록\n   - 모든 헤딩은 ## 또는 ###로\n   - 섹션 구조 제목 헤딩은 모두 ##, 예) ## 핵심 인사이트(Key Insights)   \n   - 표는 |로 정확히 구분(들여쓰기X)\n   - 표에는 반드시 테이블 헤더가 존재하록\n   - 콜아웃/인용/불릿/넘버링 등 모든 마크다운 문법을 정확히 닫아서 작성\n   - 볼드(**굵게**), 이탤릭(*기울임*), 하이라이트(==강조==) 등은 마크다운 원칙대로\n   - 섹션별 포맷이 반복되지 않도록 할 것\n   - 불완전한 표/리스트/인용 등 마크다운 구문 오류 없이 완성\n   - 불렛 포인트 계층은 2계층까지만\n\n7. 출력은 반드시 아래 JSON 구조만 사용:\n\n```json\n{\n  \"id\": \"[고유값]\",\n  \"title\": \"[트렌드 분석 주제의 자연스러운 한글 제목]\",\n  \"content\": \"[계층적 마크다운 구조, 규칙 100% 적용]\",\n  \"tags\": [\"트렌드\", \"키워드\", \"분석\", ...]  // 최대 10개\n}"
+        }
+      },
+      "id": "23462309-e282-4744-8ed6-7e18295f5753",
+      "name": "Zettlekasten Notion Block",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        896,
+        896
+      ],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {
+          "maxTokens": 32768,
+          "temperature": 0.2,
+          "timeout": 60000,
+          "topP": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        704,
+        640
+      ],
+      "id": "e8b6c6cb-f8bb-4f84-88c4-7a92965ac66f",
+      "name": "OpenAI Model 3",
+      "credentials": {
+        "openAiApi": {
+          "id": "GU4Fc8aV2Jc3O9Mo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {
+          "temperature": 0.2,
+          "topP": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        1104
+      ],
+      "id": "ed0e4f2d-4885-4b5c-b08f-4e51c2654c60",
+      "name": "OpenAI Model 4",
+      "credentials": {
+        "openAiApi": {
+          "id": "GU4Fc8aV2Jc3O9Mo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": { \"type\": \"string\" },\n    \"title\": { \"type\": \"string\" },\n    \"content\": { \"type\": \"string\" },\n    \"tags\": {\n      \"type\": \"array\",\n      \"items\": { \"type\": \"string\" }\n    }\n  },\n  \"required\": [\"id\", \"title\", \"content\", \"tags\"]\n}"
+      },
+      "id": "6bb4103e-b954-4d70-b60b-ee1644abc1c0",
+      "name": "Output Parser 1",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        848,
+        640
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": { \"type\": \"string\" },\n    \"title\": { \"type\": \"string\" },\n    \"content\": { \"type\": \"string\" },\n    \"tags\": {\n      \"type\": \"array\",\n      \"items\": { \"type\": \"string\" }\n    }\n  },\n  \"required\": [\"id\", \"title\", \"content\", \"tags\"]\n}"
+      },
+      "id": "91a184bb-bb5e-4fbf-b521-a46da2c553e7",
+      "name": "Output Parser 2",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        1040,
+        1104
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.notion.com/v1/blocks/{{ $('Webhook').item.json.body.data.id }}/children",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Notion-Version",
+              "value": "2025-09-03"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        896
+      ],
+      "id": "b6e84be3-261d-4bf7-bb5f-d03421270f76",
+      "name": "Fetch Block",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "l426XFoZtaDBUlPQ",
+          "name": "Header Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Create Notion Block\nhttps://developers.notion.com/reference/patch-block-children",
+        "height": 416,
+        "width": 960
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        672,
+        816
+      ],
+      "typeVersion": 1,
+      "id": "29468cfc-7192-4a6b-83b9-21a3fb2e44d7",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Create Obsidian Note",
+        "height": 400,
+        "width": 960,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        672,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "a1e555df-2064-48f6-8f3b-15813f766a3c",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        704,
+        896
+      ],
+      "id": "3920f4a7-4d59-4ad8-93fb-0b167d4ad391",
+      "name": "Block Merge"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "daniel8824.app.n8n.cloud",
+            "user-agent": "NotionAutomation",
+            "content-length": "1592",
+            "accept-encoding": "gzip, br",
+            "baggage": "sentry-environment=production,sentry-release=20251014.1357-e66c0d6,sentry-public_key=529a6d1990e5471d874257842c4f4ad8,sentry-trace_id=b65dd45c92ab4ac294d405693a5aad01",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "44.238.170.230",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "98e9016d9093de1d-PDX",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "keywords": "@Keywords",
+            "movie": "@Movie",
+            "sentry-trace": "b65dd45c92ab4ac294d405693a5aad01-aa507759b9693ebf",
+            "traceparent": "00-259985d645a1afb1edb5d11bed2a0a8a-13d67e497e7271f6-00",
+            "x-forwarded-for": "44.238.170.230, 104.23.160.221",
+            "x-forwarded-host": "daniel8824.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-43-869467f569-qvbjs",
+            "x-is-trusted": "yes",
+            "x-real-ip": "44.238.170.230"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "source": {
+              "type": "automation",
+              "automation_id": "28c61622-43bc-80a2-9d31-004d6bb2ed9d",
+              "action_id": "28c61622-43bc-8099-8174-005a5f72ac45",
+              "event_id": "adb9bc76-3e0e-48b0-aa37-7f39c0f156d5",
+              "user_id": "18c3cd2c-5b12-43e3-a259-41c43f68e529",
+              "attempt": 1
+            },
+            "data": {
+              "object": "page",
+              "id": "28c61622-43bc-8026-a8b5-c650133d024b",
+              "created_time": "2025-10-14T17:16:00.000Z",
+              "last_edited_time": "2025-10-14T17:30:00.000Z",
+              "created_by": {
+                "object": "user",
+                "id": "18c3cd2c-5b12-43e3-a259-41c43f68e529"
+              },
+              "last_edited_by": {
+                "object": "user",
+                "id": "18c3cd2c-5b12-43e3-a259-41c43f68e529"
+              },
+              "cover": null,
+              "icon": {
+                "type": "external",
+                "external": {
+                  "url": "https://www.notion.so/icons/code-scan_gray.svg"
+                }
+              },
+              "parent": {
+                "type": "database_id",
+                "database_id": "28c61622-43bc-8059-8514-cb26e3b129cd"
+              },
+              "archived": false,
+              "in_trash": false,
+              "is_locked": false,
+              "properties": {
+                "Movie": {
+                  "id": "title",
+                  "type": "title",
+                  "title": [
+                    {
+                      "type": "text",
+                      "text": {
+                        "content": "케이팝 데몬 헌터스",
+                        "link": null
+                      },
+                      "annotations": {
+                        "bold": false,
+                        "italic": false,
+                        "strikethrough": false,
+                        "underline": false,
+                        "code": false,
+                        "color": "default"
+                      },
+                      "plain_text": "케이팝 데몬 헌터스",
+                      "href": null
+                    }
+                  ]
+                },
+                "Keywords": {
+                  "id": "C%40KF",
+                  "type": "multi_select",
+                  "multi_select": [
+                    {
+                      "id": "mPF~",
+                      "name": "#케이팝데몬헌터스",
+                      "color": "gray"
+                    },
+                    {
+                      "id": "MmK@",
+                      "name": "#케데헌",
+                      "color": "purple"
+                    },
+                    {
+                      "id": "GjQX",
+                      "name": "#헌트릭스",
+                      "color": "default"
+                    },
+                    {
+                      "id": "=GRw",
+                      "name": "#김밥챌린지",
+                      "color": "red"
+                    }
+                  ]
+                }
+              },
+              "url": "https://www.notion.so/28c6162243bc8026a8b5c650133d024b",
+              "public_url": "https://www.daniel8824.kr/28c6162243bc8026a8b5c650133d024b",
+              "request_id": "ac03c2a2-6796-4607-9bc3-6f45291329e3"
+            }
+          },
+          "webhookUrl": "https://daniel8824.app.n8n.cloud/webhook/f0e68830-028c-47af-b0e6-813785bf376f",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Keywords Field",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Block Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Keywords Field": {
+      "main": [
+        [
+          {
+            "node": "Fetch Apify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Content": {
+      "main": [
+        [
+          {
+            "node": "Create File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create File": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Caption Code": {
+      "main": [
+        [
+          {
+            "node": "All Caption Sentiment Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Block Code": {
+      "main": [
+        [
+          {
+            "node": "Fetch Block",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Apify": {
+      "main": [
+        [
+          {
+            "node": "Caption Code",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Caption Sentiment Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Caption Sentiment Analysis": {
+      "main": [
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model 1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Caption Sentiment Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All Caption Sentiment Analysis": {
+      "main": [
+        [
+          {
+            "node": "Zettlekasten Obsidian Note",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Block Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Zettlekasten Obsidian Note",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Block Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Zettlekasten Obsidian Note",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Block Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model 2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "All Caption Sentiment Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zettlekasten Obsidian Note": {
+      "main": [
+        [
+          {
+            "node": "Combine Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zettlekasten Notion Block": {
+      "main": [
+        [
+          {
+            "node": "Block Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model 3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Zettlekasten Obsidian Note",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model 4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Zettlekasten Notion Block",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Parser 1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Zettlekasten Obsidian Note",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Output Parser 2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Zettlekasten Notion Block",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Block": {
+      "main": [
+        []
+      ]
+    },
+    "Block Merge": {
+      "main": [
+        [
+          {
+            "node": "Zettlekasten Notion Block",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a database page": {
+      "main": [
+        []
+      ]
+    },
+    "Upload file": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e667b2b6-7c07-428b-8807-312466e6cc70",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed29603280f689e433d162d6eb2f4c0ef594feb614602d9f72d06ccb3a8d3e19"
+  },
+  "id": "li7T4iynzDK4qJoe",
+  "tags": []
+}
