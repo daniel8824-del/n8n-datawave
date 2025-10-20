@@ -1,0 +1,441 @@
+{
+  "name": "Instagram Notion Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Create Notion Database",
+        "height": 384,
+        "width": 640
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        96,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "afa738ae-eb8f-4640-b798-6bee277ffa4b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Apify Scraper",
+        "height": 240,
+        "width": 214,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -160,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "999482d2-1b02-4f70-bf09-666eb9e12754",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Notion Trigger\n### 5min Poll",
+        "height": 288,
+        "width": 390,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -576,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "0996850c-780b-4e1f-980e-6f138d10db45",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "28c61622-43bc-8096-92c6-cf54088c72e7",
+          "mode": "list",
+          "cachedResultName": "인스타그램 스크래핑 데이터",
+          "cachedResultUrl": "https://www.notion.so/28c6162243bc809692c6cf54088c72e7"
+        },
+        "title": "인스타그램 스크래핑 데이터",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Movie|title",
+              "title": "={{ $('Keywords Field').item.json.Movie }}"
+            },
+            {
+              "key": "Keywords|multi_select",
+              "multiSelectValue": "={{ $('Keywords Field').item.json.Keywords }}"
+            },
+            {
+              "key": "Caption|rich_text",
+              "textContent": "={{ $json.caption }}"
+            },
+            {
+              "key": "Hashtags|multi_select",
+              "multiSelectValue": "={{ $json.hashtags }}"
+            },
+            {
+              "key": "URL|url",
+              "urlValue": "={{ $json.url }}"
+            },
+            {
+              "key": "Display|files",
+              "fileUrls": {
+                "fileUrl": [
+                  {
+                    "name": "DisplayImage",
+                    "url": "={{ $json.displayUrl }}"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "Likes|number",
+              "numberValue": "={{$json.likesCount === -1 ? 0 : $json.likesCount}}"
+            },
+            {
+              "key": "Comments|number",
+              "numberValue": "={{$json.commentsCount === -1 ? 0 : $json.commentsCount}}"
+            },
+            {
+              "key": "Users|rich_text",
+              "textContent": "={{ $json.ownerFullName }}"
+            },
+            {
+              "key": "ID|rich_text",
+              "textContent": "={{ $json.id }}"
+            },
+            {
+              "key": "Timestamp|date",
+              "date": "={{ new Date($json.timestamp).toISOString().slice(0, 16).replace('T', ' ') }}"
+            },
+            {
+              "key": "Category|select",
+              "selectValue": "={{ $json.sentimentAnalysis.category }}"
+            },
+            {
+              "key": "Strength|number",
+              "numberValue": "={{ $json.sentimentAnalysis.strength }}"
+            },
+            {
+              "key": "Confidence|number",
+              "numberValue": "={{ $json.sentimentAnalysis.confidence }}"
+            },
+            {
+              "key": "Keyword Page|relation",
+              "relationValue": [
+                "={{ $('Webhook').item.json.body.data.id }}"
+              ]
+            }
+          ]
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "type": "heading_2",
+              "textContent": "Movie"
+            },
+            {
+              "textContent": "={{ $('Keywords Field').item.json.Movie }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Keywords"
+            },
+            {
+              "textContent": "={{ $(\"Keywords Field\").item.json.Keywords.map(tag => \"#\" + tag).join(\", \") }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "=Caption"
+            },
+            {
+              "textContent": "={{ $json.caption }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "URL"
+            },
+            {
+              "textContent": "={{ $json.url }}"
+            },
+            {
+              "type": "image",
+              "url": "={{ $json.displayUrl }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Likes"
+            },
+            {
+              "textContent": "={{ ($json.likesCount === -1 ? 0 : $json.likesCount).toString() }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Comments"
+            },
+            {
+              "textContent": "={{ ($json.commentsCount === -1 ? 0 : $json.commentsCount).toString() }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Timestamp"
+            },
+            {
+              "textContent": "={{ new Date($json.timestamp).toISOString().slice(0, 16).replace('T', ' ') }}"
+            }
+          ]
+        },
+        "options": {
+          "iconType": "file",
+          "icon": "=https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/2048px-Instagram_logo_2022.svg.png"
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        256
+      ],
+      "id": "2ed0c3c4-c8d1-4992-bac1-0c44c33ff946",
+      "name": "Create a database page",
+      "credentials": {
+        "notionApi": {
+          "id": "1IYH8sk8KrXGZta9",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/GdWCkxBtKWOsKjdch/run-sync-get-dataset-items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"hashtags\": {{ JSON.stringify($json.Keywords) }},\n  \"resultsLimit\": 2,\n  \"resultsType\": \"posts\"\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        256
+      ],
+      "id": "db893923-19fd-46a1-8bc6-9140659a570f",
+      "name": "Fetch Apify",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "X7hULh0nYGf8Oasf",
+          "name": "Header Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.caption }}",
+        "options": {
+          "categories": "Positive, Neutral, Negative",
+          "systemPromptTemplate": "You are highly intelligent and accurate sentiment analyzer. Analyze the sentiment of the provided text. Categorize it into one of the following: {categories}. Use the provided formatting instructions. Only output the JSON.",
+          "includeDetailedResults": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.sentimentAnalysis",
+      "typeVersion": 1.1,
+      "position": [
+        144,
+        240
+      ],
+      "id": "5447abdd-b758-401f-a609-fe6c35ccdd7d",
+      "name": "Caption Sentiment Analysis"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        432
+      ],
+      "id": "d8af3b14-4f76-40ef-8581-16e520f3afb9",
+      "name": "OpenAI Model 1",
+      "credentials": {
+        "openAiApi": {
+          "id": "GU4Fc8aV2Jc3O9Mo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "databaseId": {
+          "__rl": true,
+          "value": "28c61622-43bc-8059-8514-cb26e3b129cd",
+          "mode": "list",
+          "cachedResultName": "인스타그램 스크래핑 키워드",
+          "cachedResultUrl": "https://www.notion.so/28c6162243bc80598514cb26e3b129cd"
+        },
+        "simple": false
+      },
+      "type": "n8n-nodes-base.notionTrigger",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        256
+      ],
+      "id": "805906a7-a155-4647-98c4-743b95b086b0",
+      "name": "Notion Trigger",
+      "credentials": {
+        "notionApi": {
+          "id": "1IYH8sk8KrXGZta9",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f143017e-0ebb-470c-9407-7fa518403955",
+              "name": "Movie",
+              "value": "={{ $json.properties.Movie.title[0].plain_text }}",
+              "type": "string"
+            },
+            {
+              "id": "8b63e2df-84f0-4d9c-bafe-080f90b84916",
+              "name": "Keywords",
+              "value": "={{ $json.properties.Keywords.multi_select.map(tag => tag.name.replace(/^#/, '')) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        256
+      ],
+      "id": "b5552c5b-1805-4fde-89db-80e39509d386",
+      "name": "Keywords Field"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Fetch Apify": {
+      "main": [
+        [
+          {
+            "node": "Caption Sentiment Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Caption Sentiment Analysis": {
+      "main": [
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a database page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Model 1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Caption Sentiment Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a database page": {
+      "main": [
+        []
+      ]
+    },
+    "Keywords Field": {
+      "main": [
+        []
+      ]
+    },
+    "Notion Trigger": {
+      "main": [
+        [
+          {
+            "node": "Keywords Field",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "72275f57-61d6-40f1-8e28-7e33bb4598d6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed29603280f689e433d162d6eb2f4c0ef594feb614602d9f72d06ccb3a8d3e19"
+  },
+  "id": "c6gtay7DsgjL0aXX",
+  "tags": []
+}
