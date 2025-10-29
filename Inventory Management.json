@@ -1,0 +1,3800 @@
+{
+  "name": "Inventory Management",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "📦품목구분",
+        "formDescription": "품목을 선택해주세요.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "업무목적",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "재고입력"
+                  },
+                  {
+                    "option": "재고확인"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "품목구분",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Z-조립등"
+                  },
+                  {
+                    "option": "Z-미조립등"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "다음"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -2576,
+        -384
+      ],
+      "id": "e0faa39e-cdec-48f3-9531-2367f2280940",
+      "name": "품목구분 선택",
+      "webhookId": "fd0cfa02-e6eb-4257-8c21-27f7e9a462df"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "품목선택",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "={{ $json.options[0].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[1].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[2].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[3].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[4].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[5].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[6].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[7].option }}"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "거래처명",
+              "placeholder": "AA전기",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "거래구분",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "입고"
+                  },
+                  {
+                    "option": "생산"
+                  },
+                  {
+                    "option": "출고"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "거래수량",
+              "fieldType": "number",
+              "placeholder": "1",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "거래일자",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "적요",
+              "fieldType": "textarea",
+              "placeholder": "특이사항이 있으면 입력하세요."
+            },
+            {
+              "fieldLabel": "담당자",
+              "placeholder": "담당자 이름",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "formTitle": "📦거래정보",
+          "formDescription": "거래정보를 입력해주세요.",
+          "buttonLabel": "제출"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        -1488,
+        -272
+      ],
+      "id": "6bcfcbb9-de00-49d5-ba72-ffa6e4b515a9",
+      "name": "거래정보 입력 A",
+      "webhookId": "df3c6358-5087-42f4-be0b-2333b63a6ff4"
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "11IeTxHED31wq7KdS1CKxaz3a1s8jCnf0esIt8NE11Rw",
+          "mode": "list",
+          "cachedResultName": "작업요청서-템플릿",
+          "cachedResultUrl": "https://docs.google.com/document/d/11IeTxHED31wq7KdS1CKxaz3a1s8jCnf0esIt8NE11Rw/edit?usp=drivesdk"
+        },
+        "name": "={{ $json.client }}_{{ $json.type }}_{{ $json.date }}_{{ $json.manager }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1120,
+        -16
+      ],
+      "id": "fc313e06-be11-4e9e-8532-02e85055a470",
+      "name": "작업요청서 복사",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "BjmMmbCV1dlYbqNW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "<<estimate date>>",
+              "replaceText": "={{ DateTime.now().toISODate() }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "<<to>>",
+              "replaceText": "i6435862@gmail.com"
+            },
+            {
+              "action": "replaceAll",
+              "text": "<<name>>",
+              "replaceText": "={{ $('거래정보 양식').item.json.manager }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "<<company>>",
+              "replaceText": "={{ $('거래정보 양식').item.json.client }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "<<remarks>>",
+              "replaceText": "={{ $('거래정보 양식').item.json.memo || '' }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "<<item 1>>",
+              "replaceText": "={{ $('거래정보 양식').item.json.item.split(\"|\")[1].trim() }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "<<item code 1>>",
+              "replaceText": "={{ $('거래정보 양식').item.json.item.split(\"|\")[0].trim() }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "<<count 1>>",
+              "replaceText": "={{ $('거래정보 양식').item.json.quantity.toString() }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "<<date 1>>",
+              "replaceText": "={{ $('거래정보 양식').item.json.date }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -944,
+        -16
+      ],
+      "id": "025395ed-6d45-4315-98e2-806f5480117b",
+      "name": "작업요청서 업데이트",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "kw9zNvAFMFWUU3Lv",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          },
+          "fileName": "={{ $('작업요청서 복사').item.json.name }}.pdf"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -768,
+        -16
+      ],
+      "id": "518e727b-5ebd-4113-95af-c8fefe61db4d",
+      "name": "작업요청서 다운로드",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "BjmMmbCV1dlYbqNW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $('작업요청서 복사').item.json.name }}",
+        "message": "=안녕하세요\n\n재고관리 자동화 시스템 테스트 메일입니다.\n감사합니다.\n\n- 재고관리팀 드림",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "=data"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -592,
+        -112
+      ],
+      "id": "551d932b-e38c-40b5-9914-09d252242c59",
+      "name": "임시메일 발송",
+      "webhookId": "8466cef7-490d-4f3c-86ed-bee0c7630ace",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V1EU2knokbFJGeti",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4a21120a-860b-47d7-bb6d-52465c71c7c9",
+              "name": "task",
+              "value": "={{ $json['업무목적'] }}",
+              "type": "string"
+            },
+            {
+              "id": "262b1e59-92e8-4955-b158-eb7a6db20129",
+              "name": "category",
+              "value": "={{ $json['품목구분'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "submittedAt, formMode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2400,
+        -384
+      ],
+      "id": "59b8b5dc-27b8-4057-9478-f445ae5fa4da",
+      "name": "품목구분 양식"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "현재수량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "구분 A",
+              "lookupValue": "={{ $json.category }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2224,
+        -384
+      ],
+      "id": "4fdc2f8c-46c5-46c6-95fa-0470a1a1474e",
+      "name": "현재품목 로드",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 품목구분 양식 노드에서 데이터 가져오기\nconst formData = $('품목구분 양식').first().json;\nconst category = formData.category;\nconst task = formData.task || '';\n\n// 각 품목을 드롭다운 옵션 형식으로 변환\nconst items = $input.all();\nconst options = items.map(item => {\n  const code = item.json.품목코드 || '';\n  const name = item.json['품목명[규격] - 조립'] || '';\n  const price = item.json.단가 || 0;\n  const stock = item.json.현재수량 || 0;\n  \n  return {\n    option: `${code} | ${name} | ${price.toLocaleString()}원 | 재고:${stock}개`\n  };\n});\n\n// 결과 반환\nreturn {\n  options: options,\n  category: category,\n  task: task\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2048,
+        -384
+      ],
+      "id": "53709b87-3c27-49ea-8e68-656e34b517b3",
+      "name": "현재품목 양식"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "품목선택",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "={{ $json.options[0].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[1].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[2].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[3].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[4].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[5].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[6].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[7].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[8].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[9].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[10].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[11].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[12].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[13].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[14].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[15].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[16].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[17].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[18].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[19].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[20].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[21].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[22].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[23].option }}"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "거래처명",
+              "placeholder": "AA전기",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "거래구분",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "입고"
+                  },
+                  {
+                    "option": "생산"
+                  },
+                  {
+                    "option": "출고"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "거래수량",
+              "fieldType": "number",
+              "placeholder": "1",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "거래일자",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "적요",
+              "fieldType": "textarea",
+              "placeholder": "특이사항이 있으면 입력하세요."
+            },
+            {
+              "fieldLabel": "담당자",
+              "placeholder": "담당자 이름",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "formTitle": "📦거래정보",
+          "formDescription": "거래정보를 입력해주세요.",
+          "buttonLabel": "제출"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        -1488,
+        -80
+      ],
+      "id": "aa672768-6bcf-403a-97ad-927621c9794d",
+      "name": "거래정보 입력 B",
+      "webhookId": "df3c6358-5087-42f4-be0b-2333b63a6ff4"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "Z-조립등",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "13b21470-5daa-43fb-af6b-ecdd25b17c02"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Z-조립등"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "755ab587-60e1-44b9-bc00-935b22bcd8d3",
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "Z-미조립등",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Z-미조립등"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1680,
+        -592
+      ],
+      "id": "5ce180e8-90d7-4716-b893-4a6ade78c3cd",
+      "name": "업무목적 분류"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "Z-조립등",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "13b21470-5daa-43fb-af6b-ecdd25b17c02"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Z-조립등"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "755ab587-60e1-44b9-bc00-935b22bcd8d3",
+                    "leftValue": "={{ $json.category }}",
+                    "rightValue": "Z-미조립등",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Z-미조립등"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1680,
+        -176
+      ],
+      "id": "3a6fa5f7-1f57-4930-b741-5833ae6aeb2f",
+      "name": "재고품목 분류"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.task }}",
+                    "rightValue": "=재고확인",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "47bda6f8-f7fe-48dd-a1ea-7e9facef56c5"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "재고확인"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4ad42fd5-f833-40f7-b67e-9870607df273",
+                    "leftValue": "={{ $json.task }}",
+                    "rightValue": "재고입력",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "재고입력"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1872,
+        -384
+      ],
+      "id": "c03fe76a-54ac-46d6-95ef-8bf01b6b671c",
+      "name": "품목구분 분류"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "품목선택",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "={{ $json.options[0].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[1].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[2].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[3].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[4].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[5].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[6].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[7].option }}"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "formTitle": "📦재고정보",
+          "formDescription": "재고정보를 확인해주세요.",
+          "buttonLabel": "완료"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        -1488,
+        -688
+      ],
+      "id": "1b452c77-0ed7-4dd3-bfe5-01c74bc0d509",
+      "name": "재고정보 확인 A",
+      "webhookId": "df3c6358-5087-42f4-be0b-2333b63a6ff4"
+    },
+    {
+      "parameters": {
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "품목선택",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "={{ $json.options[0].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[1].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[2].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[3].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[4].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[5].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[6].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[7].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[8].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[9].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[10].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[11].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[12].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[13].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[14].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[15].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[16].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[17].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[18].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[19].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[20].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[21].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[22].option }}"
+                  },
+                  {
+                    "option": "={{ $json.options[23].option }}"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "formTitle": "📦재고정보",
+          "formDescription": "재고정보를 확인해주세요.",
+          "buttonLabel": "완료"
+        }
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        -1488,
+        -496
+      ],
+      "id": "102213e9-e1b6-4640-a9fe-4c76a87d6fe2",
+      "name": "재고정보 확인 B",
+      "webhookId": "df3c6358-5087-42f4-be0b-2333b63a6ff4"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2062631005,
+          "mode": "list",
+          "cachedResultName": "거래내역",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=2062631005"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "품목명[규격] - 조립": "={{ $json.item.split(\"|\")[1].trim() }}",
+            "품목코드": "={{ $json.item.split(\"|\")[0].trim() }}",
+            "거래처명": "={{ $json.client }}",
+            "거래구분": "={{ $json.type }}",
+            "거래수량": "={{ (parseInt($json.quantity) || 0).toLocaleString('ko-KR') }}",
+            "거래일자": "={{ $json.date }}",
+            "적요": "={{ $json.memo }}",
+            "제출일시": "={{ DateTime.fromISO($json.submittedAt).toFormat('yyyy-MM-dd HH:mm') }}",
+            "담당자": "={{ $json.manager }}",
+            "거래 전 재고": "={{ parseInt($json.item.split(\"|\")[3].trim().replace(/[^0-9]/g, '')).toLocaleString('ko-KR') }}",
+            "단가": "={{ parseInt($json.item.split(\"|\")[2].trim().replace(/[^0-9]/g, '')).toLocaleString('ko-KR') }}",
+            "거래 후 재고": "={{ (parseInt($json.item.split(\"|\")[3].trim().replace(/[^0-9]/g, '')) + ($json.type == '출고' ? -parseInt($json.quantity) : parseInt($json.quantity))).toLocaleString('ko-KR') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "품목명[규격] - 조립",
+              "displayName": "품목명[규격] - 조립",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "품목코드",
+              "displayName": "품목코드",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "단가",
+              "displayName": "단가",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "거래처명",
+              "displayName": "거래처명",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "거래구분",
+              "displayName": "거래구분",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "거래수량",
+              "displayName": "거래수량",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "거래일자",
+              "displayName": "거래일자",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "적요",
+              "displayName": "적요",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "담당자",
+              "displayName": "담당자",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "제출일시",
+              "displayName": "제출일시",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "거래 전 재고",
+              "displayName": "거래 전 재고",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "거래 후 재고",
+              "displayName": "거래 후 재고",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1120,
+        -368
+      ],
+      "id": "27bbd940-760d-4f94-8d3a-87d9e378b76c",
+      "name": "거래내역 생성",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2e8d1a3c-8da5-46e8-a12d-d1daa0666ed0",
+              "name": "item",
+              "value": "={{ $json['품목선택'] }}",
+              "type": "string"
+            },
+            {
+              "id": "1003452d-a642-4552-b841-d253520d613f",
+              "name": "client",
+              "value": "={{ $json['거래처명'] }}",
+              "type": "string"
+            },
+            {
+              "id": "451ee67d-9a5e-4d9a-ad47-960d0651806f",
+              "name": "type",
+              "value": "={{ $json['거래구분'] }}",
+              "type": "string"
+            },
+            {
+              "id": "d48976fe-58b8-49d1-99bc-8279e61bde26",
+              "name": "quantity",
+              "value": "={{ $json['거래수량'] }}",
+              "type": "number"
+            },
+            {
+              "id": "97ac572c-3303-4b8f-b186-386df028f080",
+              "name": "date",
+              "value": "={{ $json['거래일자'] }}",
+              "type": "string"
+            },
+            {
+              "id": "dad26246-89a2-4b29-acfc-002edd03b950",
+              "name": "memo",
+              "value": "={{ $json['적요'] }}",
+              "type": "string"
+            },
+            {
+              "id": "031bb0ba-9580-40c1-9b0d-e7b309049336",
+              "name": "manager",
+              "value": "={{ $json['담당자'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "include": "selected",
+        "includeFields": "submittedAt, formMode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1296,
+        -176
+      ],
+      "id": "948b194b-f430-4547-93e0-95eed624ea36",
+      "name": "거래정보 양식"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3a46f556-3109-4228-b66a-77abca52e7cd",
+              "name": "product",
+              "value": "={{ $json['품목명[규격] - 조립'] }}",
+              "type": "string"
+            },
+            {
+              "id": "6fd68d2a-0950-4567-94d1-e9dc0f29c346",
+              "name": "code",
+              "value": "={{ $json['품목코드'] }}",
+              "type": "string"
+            },
+            {
+              "id": "3bd408f6-0903-49f4-8ea9-67c40a9bb982",
+              "name": "client",
+              "value": "={{ $json['거래처명'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5f06d938-b235-4808-98af-aa21ea44fcd0",
+              "name": "type",
+              "value": "={{ $json['거래구분'] }}",
+              "type": "string"
+            },
+            {
+              "id": "6de24dbc-8319-41ef-9541-f333f991f113",
+              "name": "date",
+              "value": "={{ $json['거래일자'] }}",
+              "type": "string"
+            },
+            {
+              "id": "9ac4989a-67b5-49af-b539-fbed328cafc4",
+              "name": "memo",
+              "value": "={{ $json['적요'] }}",
+              "type": "string"
+            },
+            {
+              "id": "7750fe85-1312-49ad-b650-d281ecf9b810",
+              "name": "at_time",
+              "value": "={{ $json['제출일시'] }}",
+              "type": "string"
+            },
+            {
+              "id": "5dd8d390-0ef1-434f-a7f1-28adae46484e",
+              "name": "manager",
+              "value": "={{ $json['담당자'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a176cf94-ea3a-4a31-8187-c5f52cbeb56b",
+              "name": "cost",
+              "value": "={{ $json['단가'] }}",
+              "type": "string"
+            },
+            {
+              "id": "1ba2325b-6e56-4149-a50e-350767a76bab",
+              "name": "in",
+              "value": "={{ $json['거래구분'] == '입고' ? parseInt($json['거래수량'] || 0) : 0 }}",
+              "type": "string"
+            },
+            {
+              "id": "890a4c65-2df0-4f72-84d9-bc67854e154f",
+              "name": "make",
+              "value": "={{ $json['거래구분'] == '생산' ? parseInt($json['거래수량'] || 0) : 0 }}",
+              "type": "string"
+            },
+            {
+              "id": "9b163655-743b-4e1e-8a5e-c5861c4d1de2",
+              "name": "out",
+              "value": "={{ $json['거래구분'] == '출고' ? parseInt($json['거래수량'] || 0) : 0 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -944,
+        -368
+      ],
+      "id": "75f8ac23-2a01-401a-adc7-10c158fdd649",
+      "name": "일별내역 양식"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "현재수량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "현재수량": "={{ $('거래내역 생성').item.json['거래 후 재고'] }}",
+            "품목코드": "={{ $json['품목코드'] }}"
+          },
+          "matchingColumns": [
+            "품목코드"
+          ],
+          "schema": [
+            {
+              "id": "구분 A",
+              "displayName": "구분 A",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "구분 B",
+              "displayName": "구분 B",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "규격",
+              "displayName": "규격",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "품목명[규격] - 조립",
+              "displayName": "품목명[규격] - 조립",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "품목코드",
+              "displayName": "품목코드",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "단가",
+              "displayName": "단가",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "전월수량",
+              "displayName": "전월수량",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "현재수량",
+              "displayName": "현재수량",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "금액",
+              "displayName": "금액",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -592,
+        -464
+      ],
+      "id": "10e23cb1-22ba-4522-b54e-eefff59f5319",
+      "name": "현재수량 업데이트",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1388800362,
+          "mode": "list",
+          "cachedResultName": "위험재고",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=1388800362"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "품목코드": "={{ $json['품목코드'] }}",
+            "현재수량": "={{ $json['현재수량'] }}"
+          },
+          "matchingColumns": [
+            "품목코드"
+          ],
+          "schema": [
+            {
+              "id": "구분 A",
+              "displayName": "구분 A",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "구분 B",
+              "displayName": "구분 B",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "규격",
+              "displayName": "규격",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "품목명[규격] - 조립",
+              "displayName": "품목명[규격] - 조립",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "품목코드",
+              "displayName": "품목코드",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "현재수량",
+              "displayName": "현재수량",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "위험재고",
+              "displayName": "위험재고",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "상태",
+              "displayName": "상태",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -416,
+        -464
+      ],
+      "id": "d1d8995a-7150-4618-962b-8d5fe7cf0945",
+      "name": "위험재고 업데이트",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1388800362,
+          "mode": "list",
+          "cachedResultName": "위험재고",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=1388800362"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "품목코드",
+              "lookupValue": "={{ $json['품목코드'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -592,
+        -272
+      ],
+      "id": "5cf45b4b-148d-47a4-b3fa-0f991ec92e2e",
+      "name": "위험재고 로드",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// 재고 상태 자동 업데이트 + Slack 메시지 생성\n// ============================================\n\nconst items = $input.all();\nconst updatedItems = [];\nconst dangerItems = [];\n\n// 스프레드시트 URL (위험재고 시트)\nconst SHEET_URL = 'https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=1388800362';\n\nitems.forEach(item => {\n  const itemCode = item.json['품목코드'];\n  const itemName = item.json['품목명[규격] - 조립'];\n  const category = item.json['구분 A'];\n  const currentStock = parseInt(item.json['현재수량'] || 0);\n  const dangerLevel = parseInt(item.json['위험재고'] || 0);\n  \n  // 상태 판단 로직\n  let status = '';\n  let statusEmoji = '';\n  let statusColor = '';\n  \n  if (currentStock > dangerLevel * 1.5) {\n    // 안전: 위험재고의 150% 초과\n    status = '안전';\n    statusEmoji = '🟢';\n    statusColor = 'green';\n  } else if (currentStock > dangerLevel) {\n    // 주의: 위험재고 초과하지만 150% 이하\n    status = '주의';\n    statusEmoji = '🟡';\n    statusColor = 'orange';\n  } else {\n    // 위험: 위험재고 이하 (마이너스 포함)\n    status = '위험';\n    statusEmoji = '🔴';\n    statusColor = 'red';\n  }\n  \n  // 재고 차이 계산\n  const stockDifference = currentStock - dangerLevel;\n  const stockPercentage = dangerLevel > 0 ? \n    ((currentStock / dangerLevel) * 100).toFixed(1) : \n    0;\n  \n  const itemData = {\n    '품목코드': itemCode,\n    '품목명[규격] - 조립': itemName,\n    '구분 A': category,\n    '현재수량': currentStock,\n    '위험재고': dangerLevel,\n    '상태': `${statusEmoji} ${status}`,\n    '상태값': status,\n    '상태색상': statusColor,\n    '재고차이': stockDifference,\n    '재고비율': `${stockPercentage}%`\n  };\n  \n  updatedItems.push(itemData);\n  \n  // 위험 품목 수집\n  if (status === '위험') {\n    dangerItems.push(itemData);\n  }\n});\n\n// ============================================\n// Slack 메시지 생성\n// ============================================\n\nlet slackMessage = '';\n\nif (dangerItems.length > 0) {\n  const timestamp = new Date().toLocaleString('ko-KR', {\n    timeZone: 'Asia/Seoul',\n    year: 'numeric',\n    month: '2-digit',\n    day: '2-digit',\n    hour: '2-digit',\n    minute: '2-digit'\n  });\n\n  slackMessage = `🚨 *재고 위험 알림*\\n\\n`;\n  slackMessage += `⏰ ${timestamp}\\n\\n`;\n  slackMessage += `━━━━━━━━━━━━━━━━━━━━\\n\\n`;\n  slackMessage += `🔴 *위험 품목: ${dangerItems.length}개*\\n\\n`;\n\n  dangerItems.forEach((item, index) => {\n    const shortage = item['위험재고'] - item['현재수량'];\n    \n    slackMessage += `${index + 1}. *${item['품목명[규격] - 조립']}* (${item['품목코드']})\\n`;\n    slackMessage += `    현재: ${item['현재수량']}개 | 위험: ${item['위험재고']}개\\n`;\n    slackMessage += `    ⚠️ ${shortage}개 부족\\n\\n`;\n  });\n\n  slackMessage += `━━━━━━━━━━━━━━━━━━━━\\n\\n`;\n  slackMessage += `💡 위 품목들에 대한 *즉시 발주*가 필요합니다.\\n`;\n  slackMessage += `📋 자세한 내용은 <${SHEET_URL}|위험재고 시트>를 확인하세요.`;\n}\n\n// ============================================\n// 결과 반환\n// ============================================\n\nreturn updatedItems.map(item => ({\n  ...item,\n  'Slack메시지': slackMessage,\n  '위험품목수': dangerItems.length,\n  '알림필요': dangerItems.length > 0\n}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -416,
+        -272
+      ],
+      "id": "dec0fe0f-5e43-4d1d-88b0-7c0701a39178",
+      "name": "위험재고 양식"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1388800362,
+          "mode": "list",
+          "cachedResultName": "위험재고",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=1388800362"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "품목코드": "={{ $json['품목코드'] }}",
+            "상태": "={{ $json['상태'] }}"
+          },
+          "matchingColumns": [
+            "품목코드"
+          ],
+          "schema": [
+            {
+              "id": "구분 A",
+              "displayName": "구분 A",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "구분 B",
+              "displayName": "구분 B",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "규격",
+              "displayName": "규격",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "품목명[규격] - 조립",
+              "displayName": "품목명[규격] - 조립",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "품목코드",
+              "displayName": "품목코드",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "현재수량",
+              "displayName": "현재수량",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "위험재고",
+              "displayName": "위험재고",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "상태",
+              "displayName": "상태",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -240,
+        -368
+      ],
+      "id": "18258188-cec4-4aab-b839-047ca352075f",
+      "name": "위험상태 업데이트",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4abd2086-4757-4c63-918a-0d2669fe6a5d",
+              "leftValue": "={{ $json['상태값'] }}",
+              "rightValue": "위험",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        -176
+      ],
+      "id": "98688985-2a6a-4922-aead-3cccd520591e",
+      "name": "위험상태 조건"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09MWS25VMZ",
+          "mode": "list",
+          "cachedResultName": "케이원솔루션-재고관리"
+        },
+        "text": "={{ $json['Slack메시지'] }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -32,
+        -224
+      ],
+      "id": "f9110876-cfe5-4feb-af36-7b506059011c",
+      "name": "위험상태 알림",
+      "webhookId": "c00cbfd5-4559-457e-b201-001be195350f",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "pUuwYYXjcBnnYwro",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 일별 데이터를 월별로 집계\nconst dailyData = $input.all();\nconst monthlyMap = new Map();\n\ndailyData.forEach(item => {\n  const date = item.json['거래일자']; // \"2025-11-03\"\n  const yearMonth = date.substring(0, 7); // \"2025-11\"\n  \n  const itemCode = item.json['품목코드'];\n  const itemName = item.json['품목명[규격] - 조립'];\n  \n  const key = `${yearMonth}_${itemCode}`;\n  \n  if (!monthlyMap.has(key)) {\n    monthlyMap.set(key, {\n      '거래월분': yearMonth,\n      '품목코드': itemCode,\n      '품목명[규격] - 조립': itemName,\n      '월별 입고': 0,\n      '월별 생산': 0,\n      '월별 출고': 0\n    });\n  }\n  \n  const summary = monthlyMap.get(key);\n  summary['월별 입고'] += parseInt(item.json['입고'] || 0);\n  summary['월별 생산'] += parseInt(item.json['생산'] || 0);\n  summary['월별 출고'] += parseInt(item.json['출고'] || 0);\n});\n\nreturn Array.from(monthlyMap.values());"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -592,
+        -640
+      ],
+      "id": "2acc6a7f-e52e-4bae-9b3d-02883b95b3de",
+      "name": "월별내역 양식"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1957966753,
+          "mode": "list",
+          "cachedResultName": "거래처내역",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=1957966753"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "거래처명": "={{ $json.client }}",
+            "거래일자": "={{ $json.date }}",
+            "품목명[규격] - 조립": "={{ $json.product }}",
+            "품목코드": "={{ $json.code }}",
+            "입고": "={{ $json.in }}",
+            "생산": "={{ $json.make }}",
+            "출고": "={{ $json.out }}",
+            "단가": "={{ $json.cost }}",
+            "금액": "={{ (parseInt(($json.cost || '0').toString().replace(/[^0-9]/g, '')) * (parseInt($json.in || 0) + parseInt($json.make || 0) + parseInt($json.out || 0))).toLocaleString('ko-KR') }}",
+            "적요": "={{ $json.memo }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "거래처명",
+              "displayName": "거래처명",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "거래일자",
+              "displayName": "거래일자",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "품목명[규격] - 조립",
+              "displayName": "품목명[규격] - 조립",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "품목코드",
+              "displayName": "품목코드",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "입고",
+              "displayName": "입고",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "생산",
+              "displayName": "생산",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "출고",
+              "displayName": "출고",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "적요",
+              "displayName": "적요",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "단가",
+              "displayName": "단가",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "금액",
+              "displayName": "금액",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -768,
+        -368
+      ],
+      "id": "84f8fcf4-c4c9-4264-9ef0-1428bbcfe218",
+      "name": "거래처내역 생성",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1513202127,
+          "mode": "list",
+          "cachedResultName": "일별내역",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=1513202127"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "거래일자": "={{ $json.date }}",
+            "품목코드": "={{ $json.code }}",
+            "품목명[규격] - 조립": "={{ $json.product }}",
+            "생산": "={{ $json.make }}",
+            "출고": "={{ $json.out }}",
+            "입고": "={{ $json.in }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "거래일자",
+              "displayName": "거래일자",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "품목명[규격] - 조립",
+              "displayName": "품목명[규격] - 조립",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "품목코드",
+              "displayName": "품목코드",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "입고",
+              "displayName": "입고",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "생산",
+              "displayName": "생산",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "출고",
+              "displayName": "출고",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -768,
+        -640
+      ],
+      "id": "b22d61bf-a498-48ce-937c-bd570ec6b9e6",
+      "name": "일별내역 생성",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 868446532,
+          "mode": "list",
+          "cachedResultName": "월별내역",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=868446532"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "거래월분": "={{ $json['거래월분'] }}",
+            "품목명[규격] - 조립": "={{ $json['품목명[규격] - 조립'] }}",
+            "품목코드": "={{ $json['품목코드'] }}",
+            "입고": "={{ $json['월별 입고'] }}",
+            "생산": "={{ $json['월별 생산'] }}",
+            "출고": "={{ $json['월별 출고'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "거래월분",
+              "displayName": "거래월분",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "품목명[규격] - 조립",
+              "displayName": "품목명[규격] - 조립",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "품목코드",
+              "displayName": "품목코드",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "입고",
+              "displayName": "입고",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "생산",
+              "displayName": "생산",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "출고",
+              "displayName": "출고",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -416,
+        -640
+      ],
+      "id": "952a1a5b-de17-4aac-9f6b-ab0809f4c558",
+      "name": "월별내역 생성",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('작업요청서 복사').item.json.name }}.pdf",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1ohY4T23BEiWFwW4bjmNOuG_bXIQk8EGZ",
+          "mode": "list",
+          "cachedResultName": "작업요청서",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1ohY4T23BEiWFwW4bjmNOuG_bXIQk8EGZ"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -592,
+        80
+      ],
+      "id": "096ed70f-de73-4e50-9f1c-dfebc5995586",
+      "name": "작업요청서 보관",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "BjmMmbCV1dlYbqNW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "현재수량",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1120,
+        192
+      ],
+      "id": "40913b26-580f-446a-b611-866b82bd80cd",
+      "name": "현재수량 로드",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "fileName": "={{ DateTime.fromISO($('거래정보 양식').item.json.submittedAt).toFormat('yyyyMMdd_HHmm') }}_{{ $('거래정보 양식').item.json.item.split(\"|\")[0].trim() }}_{{ $('거래정보 양식').item.json.client }}_{{ $('거래정보 양식').item.json.type }}_{{ $('거래정보 양식').item.json.quantity }}개_{{ $('거래정보 양식').item.json.manager }}.csv",
+          "headerRow": true
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -944,
+        192
+      ],
+      "id": "0f837667-08a8-4bf5-bc73-fa8a0cc25ed1",
+      "name": "재고원장 파일"
+    },
+    {
+      "parameters": {
+        "name": "={{ DateTime.fromISO($('거래정보 양식').item.json.submittedAt).toFormat('yyyyMMdd_HHmm') }}_{{ $('거래정보 양식').item.json.item.split(\"|\")[0].trim() }}_{{ $('거래정보 양식').item.json.client }}_{{ $('거래정보 양식').item.json.type }}_{{ $('거래정보 양식').item.json.quantity }}개_{{ $('거래정보 양식').item.json.manager }}.csv",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1K02xJ8hjpKa_JsMZ2ggtCBzUWrpfWnhm",
+          "mode": "list",
+          "cachedResultName": "재고원장",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1K02xJ8hjpKa_JsMZ2ggtCBzUWrpfWnhm"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -752,
+        192
+      ],
+      "id": "b2ffd1bd-ee8f-4aca-8170-6a45f16b08b6",
+      "name": "재고원장 보관",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "BjmMmbCV1dlYbqNW",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appM1U2Sz2x9E4BSF",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://airtable.com/appM1U2Sz2x9E4BSF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblaDpbJ5jB5mnGLi",
+          "mode": "list",
+          "cachedResultName": "현재수량",
+          "cachedResultUrl": "https://airtable.com/appM1U2Sz2x9E4BSF/tblaDpbJ5jB5mnGLi"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "전월수량": "={{ parseInt(($('현재수량 로드').item.json['전월수량'] || '0').toString().replace(/[^0-9]/g, '')) }}",
+            "현재수량": "={{ parseInt(($('현재수량 로드').item.json['현재수량'] || '0').toString().replace(/[^0-9]/g, '')) }}",
+            "단가": "={{ parseInt(($('현재수량 로드').item.json['단가'] || '0').toString().replace(/[^0-9]/g, '')) }}",
+            "품목명[규격] - 조립": "={{ $json['품목명[규격] - 조립'] }}"
+          },
+          "matchingColumns": [
+            "품목명[규격] - 조립"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "품목명[규격] - 조립",
+              "displayName": "품목명[규격] - 조립",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "구분 A",
+              "displayName": "구분 A",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Z-조립등",
+                  "value": "Z-조립등"
+                },
+                {
+                  "name": "Z-미조립등",
+                  "value": "Z-미조립등"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "구분 B",
+              "displayName": "구분 B",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "A1",
+                  "value": "A1"
+                },
+                {
+                  "name": "B1",
+                  "value": "B1"
+                },
+                {
+                  "name": "C1",
+                  "value": "C1"
+                },
+                {
+                  "name": "D1",
+                  "value": "D1"
+                },
+                {
+                  "name": "E1",
+                  "value": "E1"
+                },
+                {
+                  "name": "F1",
+                  "value": "F1"
+                },
+                {
+                  "name": "G1",
+                  "value": "G1"
+                },
+                {
+                  "name": "H1",
+                  "value": "H1"
+                },
+                {
+                  "name": "G2",
+                  "value": "G2"
+                },
+                {
+                  "name": "H2",
+                  "value": "H2"
+                },
+                {
+                  "name": "I2",
+                  "value": "I2"
+                },
+                {
+                  "name": "J2",
+                  "value": "J2"
+                },
+                {
+                  "name": "K2",
+                  "value": "K2"
+                },
+                {
+                  "name": "L3",
+                  "value": "L3"
+                },
+                {
+                  "name": "M3",
+                  "value": "M3"
+                },
+                {
+                  "name": "N3",
+                  "value": "N3"
+                },
+                {
+                  "name": "O3",
+                  "value": "O3"
+                },
+                {
+                  "name": "P3",
+                  "value": "P3"
+                },
+                {
+                  "name": "Q3",
+                  "value": "Q3"
+                },
+                {
+                  "name": "R4",
+                  "value": "R4"
+                },
+                {
+                  "name": "S4",
+                  "value": "S4"
+                },
+                {
+                  "name": "V4",
+                  "value": "V4"
+                },
+                {
+                  "name": "W4",
+                  "value": "W4"
+                },
+                {
+                  "name": "X5",
+                  "value": "X5"
+                },
+                {
+                  "name": "Y5",
+                  "value": "Y5"
+                },
+                {
+                  "name": "Z5",
+                  "value": "Z5"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "규격",
+              "displayName": "규격",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "2구",
+                  "value": "2구"
+                },
+                {
+                  "name": "3구",
+                  "value": "3구"
+                },
+                {
+                  "name": "4구",
+                  "value": "4구"
+                },
+                {
+                  "name": "5구",
+                  "value": "5구"
+                },
+                {
+                  "name": "6구",
+                  "value": "6구"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "품목코드",
+              "displayName": "품목코드",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ZAS001",
+                  "value": "ZAS001"
+                },
+                {
+                  "name": "ZAS002",
+                  "value": "ZAS002"
+                },
+                {
+                  "name": "ZAS003",
+                  "value": "ZAS003"
+                },
+                {
+                  "name": "ZAS004",
+                  "value": "ZAS004"
+                },
+                {
+                  "name": "ZAS005",
+                  "value": "ZAS005"
+                },
+                {
+                  "name": "ZAS006",
+                  "value": "ZAS006"
+                },
+                {
+                  "name": "ZAS007",
+                  "value": "ZAS007"
+                },
+                {
+                  "name": "ZAS008",
+                  "value": "ZAS008"
+                },
+                {
+                  "name": "ZUN001",
+                  "value": "ZUN001"
+                },
+                {
+                  "name": "ZUN002",
+                  "value": "ZUN002"
+                },
+                {
+                  "name": "ZUN003",
+                  "value": "ZUN003"
+                },
+                {
+                  "name": "ZUN004",
+                  "value": "ZUN004"
+                },
+                {
+                  "name": "ZUN005",
+                  "value": "ZUN005"
+                },
+                {
+                  "name": "ZUN006",
+                  "value": "ZUN006"
+                },
+                {
+                  "name": "ZUN007",
+                  "value": "ZUN007"
+                },
+                {
+                  "name": "ZUN008",
+                  "value": "ZUN008"
+                },
+                {
+                  "name": "ZUN009",
+                  "value": "ZUN009"
+                },
+                {
+                  "name": "ZUN010",
+                  "value": "ZUN010"
+                },
+                {
+                  "name": "ZUN011",
+                  "value": "ZUN011"
+                },
+                {
+                  "name": "ZUN012",
+                  "value": "ZUN012"
+                },
+                {
+                  "name": "ZUN013",
+                  "value": "ZUN013"
+                },
+                {
+                  "name": "ZUN014",
+                  "value": "ZUN014"
+                },
+                {
+                  "name": "ZUN015",
+                  "value": "ZUN015"
+                },
+                {
+                  "name": "ZUN016",
+                  "value": "ZUN016"
+                },
+                {
+                  "name": "ZUN017",
+                  "value": "ZUN017"
+                },
+                {
+                  "name": "ZUN018",
+                  "value": "ZUN018"
+                },
+                {
+                  "name": "ZUN019",
+                  "value": "ZUN019"
+                },
+                {
+                  "name": "ZUN020",
+                  "value": "ZUN020"
+                },
+                {
+                  "name": "ZUN021",
+                  "value": "ZUN021"
+                },
+                {
+                  "name": "ZUN022",
+                  "value": "ZUN022"
+                },
+                {
+                  "name": "ZUN023",
+                  "value": "ZUN023"
+                },
+                {
+                  "name": "ZUN024",
+                  "value": "ZUN024"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "단가",
+              "displayName": "단가",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "전월수량",
+              "displayName": "전월수량",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "현재수량",
+              "displayName": "현재수량",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "금액",
+              "displayName": "금액",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "금액(계산)",
+              "displayName": "금액(계산)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -752,
+        368
+      ],
+      "id": "4278e665-c950-4408-b5bf-5ef1c8514eb1",
+      "name": "대시보드 기록",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "z5OjQuTdPV4EC5O3",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appM1U2Sz2x9E4BSF",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://airtable.com/appM1U2Sz2x9E4BSF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblaDpbJ5jB5mnGLi",
+          "mode": "list",
+          "cachedResultName": "현재수량",
+          "cachedResultUrl": "https://airtable.com/appM1U2Sz2x9E4BSF/tblaDpbJ5jB5mnGLi"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "품목명[규격] - 조립": "={{ $json['품목명[규격] - 조립'] }}",
+            "구분 A": "={{ $json['구분 A'] }}",
+            "구분 B": "={{ $json['구분 B'] }}",
+            "규격": "={{ $json['규격'] }}",
+            "품목코드": "={{ $json['품목코드'] }}",
+            "단가": "={{ parseInt(($json['단가'] || '0').toString().replace(/[^0-9]/g, '')) }}",
+            "전월수량": "={{ parseInt(($json['전월수량'] || '0').toString().replace(/[^0-9]/g, '')) }}",
+            "현재수량": "={{ parseInt(($json['현재수량'] || '0').toString().replace(/[^0-9]/g, '')) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "품목명[규격] - 조립",
+              "displayName": "품목명[규격] - 조립",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "구분 A",
+              "displayName": "구분 A",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Z-조립등",
+                  "value": "Z-조립등"
+                },
+                {
+                  "name": "Z-미조립등",
+                  "value": "Z-미조립등"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "구분 B",
+              "displayName": "구분 B",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "A1",
+                  "value": "A1"
+                },
+                {
+                  "name": "B1",
+                  "value": "B1"
+                },
+                {
+                  "name": "C1",
+                  "value": "C1"
+                },
+                {
+                  "name": "D1",
+                  "value": "D1"
+                },
+                {
+                  "name": "E1",
+                  "value": "E1"
+                },
+                {
+                  "name": "F1",
+                  "value": "F1"
+                },
+                {
+                  "name": "G1",
+                  "value": "G1"
+                },
+                {
+                  "name": "H1",
+                  "value": "H1"
+                },
+                {
+                  "name": "G2",
+                  "value": "G2"
+                },
+                {
+                  "name": "H2",
+                  "value": "H2"
+                },
+                {
+                  "name": "I2",
+                  "value": "I2"
+                },
+                {
+                  "name": "J2",
+                  "value": "J2"
+                },
+                {
+                  "name": "K2",
+                  "value": "K2"
+                },
+                {
+                  "name": "L3",
+                  "value": "L3"
+                },
+                {
+                  "name": "M3",
+                  "value": "M3"
+                },
+                {
+                  "name": "N3",
+                  "value": "N3"
+                },
+                {
+                  "name": "O3",
+                  "value": "O3"
+                },
+                {
+                  "name": "P3",
+                  "value": "P3"
+                },
+                {
+                  "name": "Q3",
+                  "value": "Q3"
+                },
+                {
+                  "name": "R4",
+                  "value": "R4"
+                },
+                {
+                  "name": "S4",
+                  "value": "S4"
+                },
+                {
+                  "name": "V4",
+                  "value": "V4"
+                },
+                {
+                  "name": "W4",
+                  "value": "W4"
+                },
+                {
+                  "name": "X5",
+                  "value": "X5"
+                },
+                {
+                  "name": "Y5",
+                  "value": "Y5"
+                },
+                {
+                  "name": "Z5",
+                  "value": "Z5"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "규격",
+              "displayName": "규격",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "2구",
+                  "value": "2구"
+                },
+                {
+                  "name": "3구",
+                  "value": "3구"
+                },
+                {
+                  "name": "4구",
+                  "value": "4구"
+                },
+                {
+                  "name": "5구",
+                  "value": "5구"
+                },
+                {
+                  "name": "6구",
+                  "value": "6구"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "품목코드",
+              "displayName": "품목코드",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "ZAS001",
+                  "value": "ZAS001"
+                },
+                {
+                  "name": "ZAS002",
+                  "value": "ZAS002"
+                },
+                {
+                  "name": "ZAS003",
+                  "value": "ZAS003"
+                },
+                {
+                  "name": "ZAS004",
+                  "value": "ZAS004"
+                },
+                {
+                  "name": "ZAS005",
+                  "value": "ZAS005"
+                },
+                {
+                  "name": "ZAS006",
+                  "value": "ZAS006"
+                },
+                {
+                  "name": "ZAS007",
+                  "value": "ZAS007"
+                },
+                {
+                  "name": "ZAS008",
+                  "value": "ZAS008"
+                },
+                {
+                  "name": "ZUN001",
+                  "value": "ZUN001"
+                },
+                {
+                  "name": "ZUN002",
+                  "value": "ZUN002"
+                },
+                {
+                  "name": "ZUN003",
+                  "value": "ZUN003"
+                },
+                {
+                  "name": "ZUN004",
+                  "value": "ZUN004"
+                },
+                {
+                  "name": "ZUN005",
+                  "value": "ZUN005"
+                },
+                {
+                  "name": "ZUN006",
+                  "value": "ZUN006"
+                },
+                {
+                  "name": "ZUN007",
+                  "value": "ZUN007"
+                },
+                {
+                  "name": "ZUN008",
+                  "value": "ZUN008"
+                },
+                {
+                  "name": "ZUN009",
+                  "value": "ZUN009"
+                },
+                {
+                  "name": "ZUN010",
+                  "value": "ZUN010"
+                },
+                {
+                  "name": "ZUN011",
+                  "value": "ZUN011"
+                },
+                {
+                  "name": "ZUN012",
+                  "value": "ZUN012"
+                },
+                {
+                  "name": "ZUN013",
+                  "value": "ZUN013"
+                },
+                {
+                  "name": "ZUN014",
+                  "value": "ZUN014"
+                },
+                {
+                  "name": "ZUN015",
+                  "value": "ZUN015"
+                },
+                {
+                  "name": "ZUN016",
+                  "value": "ZUN016"
+                },
+                {
+                  "name": "ZUN017",
+                  "value": "ZUN017"
+                },
+                {
+                  "name": "ZUN018",
+                  "value": "ZUN018"
+                },
+                {
+                  "name": "ZUN019",
+                  "value": "ZUN019"
+                },
+                {
+                  "name": "ZUN020",
+                  "value": "ZUN020"
+                },
+                {
+                  "name": "ZUN021",
+                  "value": "ZUN021"
+                },
+                {
+                  "name": "ZUN022",
+                  "value": "ZUN022"
+                },
+                {
+                  "name": "ZUN023",
+                  "value": "ZUN023"
+                },
+                {
+                  "name": "ZUN024",
+                  "value": "ZUN024"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "단가",
+              "displayName": "단가",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "전월수량",
+              "displayName": "전월수량",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "현재수량",
+              "displayName": "현재수량",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "금액",
+              "displayName": "금액",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -944,
+        368
+      ],
+      "id": "6d7429b9-8a08-433c-874e-9e970a2b9071",
+      "name": "대시보드 생성",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "z5OjQuTdPV4EC5O3",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appM1U2Sz2x9E4BSF",
+          "mode": "list",
+          "cachedResultName": "재고관리",
+          "cachedResultUrl": "https://airtable.com/appM1U2Sz2x9E4BSF"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblvCuyoRNMXo1tHw",
+          "mode": "list",
+          "cachedResultName": "거래내역",
+          "cachedResultUrl": "https://airtable.com/appM1U2Sz2x9E4BSF/tblvCuyoRNMXo1tHw"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "품목명[규격] - 조립": "={{ $json['품목명[규격] - 조립'] }}",
+            "품목코드": "={{ $json['품목코드'] }}",
+            "단가": "={{ parseInt(($json['단가'] || '0').toString().replace(/[^0-9]/g, '')) }}",
+            "거래처명": "={{ $json['거래처명'] }}",
+            "거래구분": "={{ $json['거래구분'] }}",
+            "거래수량": "={{ parseInt($json['거래수량'] || 0) }}",
+            "거래 전 재고": "={{ parseInt(($json['거래 전 재고'] || '0').toString().replace(/[^0-9]/g, '')) }}",
+            "거래 후 재고": "={{ parseInt(($json['거래 후 재고'] || '0').toString().replace(/[^0-9]/g, '')) }}",
+            "거래일자": "={{ $json['거래일자'] }}",
+            "적요": "={{ $json['적요'] }}",
+            "담당자": "={{ $json['담당자'] }}",
+            "제출일시": "={{ $json['제출일시'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "품목명[규격] - 조립",
+              "displayName": "품목명[규격] - 조립",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "품목코드",
+              "displayName": "품목코드",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "단가",
+              "displayName": "단가",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "거래처명",
+              "displayName": "거래처명",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "거래구분",
+              "displayName": "거래구분",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "입고",
+                  "value": "입고"
+                },
+                {
+                  "name": "출고",
+                  "value": "출고"
+                },
+                {
+                  "name": "생산",
+                  "value": "생산"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "거래수량",
+              "displayName": "거래수량",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "거래일자",
+              "displayName": "거래일자",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "적요",
+              "displayName": "적요",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "담당자",
+              "displayName": "담당자",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "제출일시",
+              "displayName": "제출일시",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "거래 전 재고",
+              "displayName": "거래 전 재고",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "거래 후 재고",
+              "displayName": "거래 후 재고",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "금액",
+              "displayName": "금액",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -944,
+        -192
+      ],
+      "id": "929432a1-b83e-464f-9822-480ad19cb8de",
+      "name": "대시보드 추가",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "z5OjQuTdPV4EC5O3",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Trigger",
+        "height": 592,
+        "width": 342,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2608,
+        -464
+      ],
+      "typeVersion": 1,
+      "id": "44c3bb78-b484-4645-86c0-80fa07838ac5",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## TASK\n### 데이터 전처리\n- 현재품목 데이터 로드\n- 실시간 재고 수량 확인",
+        "height": 672,
+        "width": 326,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2240,
+        -544
+      ],
+      "typeVersion": 1,
+      "id": "ade2e0bf-8e52-4edc-84d5-1d1ff91fddbd",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## TASK\n### 데이터 전처리\n- 업무목적 분기\n- 재고품목 분기\n",
+        "height": 768,
+        "width": 342
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1888,
+        -640
+      ],
+      "typeVersion": 1,
+      "id": "6db36350-a32e-41f4-8b12-8090d2bffc08",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## TASK\n### 데이터 전처리\n- 거래정보 입력 처리\n- 데이터 양식 표준화\n",
+        "height": 960,
+        "width": 358
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1520,
+        -832
+      ],
+      "typeVersion": 1,
+      "id": "2f57f4f7-f1bf-4600-a913-8912639d89cd",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Target \n- 구글 시트 연동\n- 에이테이블 동기화\n- 문서 자동화\n- 백업 파일 생성",
+        "height": 1440,
+        "width": 1254,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1136,
+        -832
+      ],
+      "typeVersion": 1,
+      "id": "bd376e7c-2d79-4fe9-8420-19e1e68b3b0d",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## 구글 시트\n- https://docs.google.com/spreadsheets/d/1Np34VXNUdoex-S_795Lj9P0KgpxgRiNfBhKoU0YqyxU/edit?usp=sharing\n![workflow](https://publish-01.obsidian.md/access/384f5b99b4a72111068888340c2a7430/90_Settings/92_Attachments/data_image_103.png\n)",
+        "height": 400,
+        "width": 656,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2528,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "d92c272c-6354-4656-aa85-860cc3f8493d",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## 에어테이블 베이스\n- https://airtable.com/appM1U2Sz2x9E4BSF/shrcyZmx94bWtKzf5\n![workflow](https://publish-01.obsidian.md/access/384f5b99b4a72111068888340c2a7430/90_Settings/92_Attachments/data_image_104.png\n)",
+        "height": 400,
+        "width": 672,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1856,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "d525297c-8f73-4e44-b3ac-641a2412a044",
+      "name": "Sticky Note6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "품목구분 선택": {
+      "main": [
+        [
+          {
+            "node": "품목구분 양식",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "거래정보 입력 A": {
+      "main": [
+        [
+          {
+            "node": "거래정보 양식",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "작업요청서 복사": {
+      "main": [
+        [
+          {
+            "node": "작업요청서 업데이트",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "작업요청서 업데이트": {
+      "main": [
+        [
+          {
+            "node": "작업요청서 다운로드",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "작업요청서 다운로드": {
+      "main": [
+        [
+          {
+            "node": "임시메일 발송",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "작업요청서 보관",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "품목구분 양식": {
+      "main": [
+        [
+          {
+            "node": "현재품목 로드",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "현재품목 로드": {
+      "main": [
+        [
+          {
+            "node": "현재품목 양식",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "현재품목 양식": {
+      "main": [
+        [
+          {
+            "node": "품목구분 분류",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "거래정보 입력 B": {
+      "main": [
+        [
+          {
+            "node": "거래정보 양식",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "재고품목 분류": {
+      "main": [
+        [
+          {
+            "node": "거래정보 입력 A",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "거래정보 입력 B",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "품목구분 분류": {
+      "main": [
+        [
+          {
+            "node": "업무목적 분류",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "재고품목 분류",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "업무목적 분류": {
+      "main": [
+        [
+          {
+            "node": "재고정보 확인 A",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "재고정보 확인 B",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "거래내역 생성": {
+      "main": [
+        [
+          {
+            "node": "일별내역 양식",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "대시보드 추가",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "거래정보 양식": {
+      "main": [
+        [
+          {
+            "node": "거래내역 생성",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "작업요청서 복사",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "현재수량 로드",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "일별내역 양식": {
+      "main": [
+        [
+          {
+            "node": "일별내역 생성",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "거래처내역 생성",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "현재수량 업데이트": {
+      "main": [
+        [
+          {
+            "node": "위험재고 업데이트",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "위험재고 로드": {
+      "main": [
+        [
+          {
+            "node": "위험재고 양식",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "위험재고 양식": {
+      "main": [
+        [
+          {
+            "node": "위험상태 업데이트",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "위험상태 조건",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "위험상태 업데이트": {
+      "main": [
+        []
+      ]
+    },
+    "위험상태 조건": {
+      "main": [
+        [
+          {
+            "node": "위험상태 알림",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "위험상태 알림": {
+      "main": [
+        []
+      ]
+    },
+    "월별내역 양식": {
+      "main": [
+        [
+          {
+            "node": "월별내역 생성",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "거래처내역 생성": {
+      "main": [
+        [
+          {
+            "node": "현재수량 업데이트",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "위험재고 로드",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "일별내역 생성": {
+      "main": [
+        [
+          {
+            "node": "월별내역 양식",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "현재수량 로드": {
+      "main": [
+        [
+          {
+            "node": "재고원장 파일",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "대시보드 생성",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "재고원장 파일": {
+      "main": [
+        [
+          {
+            "node": "재고원장 보관",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "대시보드 생성": {
+      "main": [
+        [
+          {
+            "node": "대시보드 기록",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Seoul",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "95eab802-43ba-480b-a727-5eaf4c17952e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed29603280f689e433d162d6eb2f4c0ef594feb614602d9f72d06ccb3a8d3e19"
+  },
+  "id": "rvFkYBKNXVcaGiCO",
+  "tags": [
+    {
+      "createdAt": "2025-10-23T04:40:24.059Z",
+      "updatedAt": "2025-10-23T04:40:24.059Z",
+      "id": "WaXinPjs7hEEVY2G",
+      "name": "케이원 솔루션"
+    }
+  ]
+}
