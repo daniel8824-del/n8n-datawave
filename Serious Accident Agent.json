@@ -1,0 +1,1368 @@
+{
+  "name": "Serious Accident Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1DE8G5Wkyv8KIexT7TJ3V7yXtyqT_pT7iWW27N5hoCdE",
+          "mode": "list",
+          "cachedResultName": "중대재해 사고현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DE8G5Wkyv8KIexT7TJ3V7yXtyqT_pT7iWW27N5hoCdE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DE8G5Wkyv8KIexT7TJ3V7yXtyqT_pT7iWW27N5hoCdE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "arno": "={{ $json.arno }}",
+            "datetime": "={{ $json.datetime }}",
+            "location": "={{ $json.location }}",
+            "accident_space": "={{ $json.accident_space }}",
+            "original_text": "={{ $json.original_text }}",
+            "cause_of_death": "={{ $json.cause_of_death }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "arno",
+              "displayName": "arno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "datetime",
+              "displayName": "datetime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "accident_space",
+              "displayName": "accident_space",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "cause_of_death",
+              "displayName": "cause_of_death",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "original_text",
+              "displayName": "original_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "fe0c7e04-3840-47fa-a899-b00ae8a9f6d8",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -208,
+        992
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## TASK\n### 데이터 요약 및 구조화\n- Google Gemini 정보 추출\n- 필드명 정리 및 날짜순 정렬",
+        "height": 508,
+        "width": 1092,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1712,
+        704
+      ],
+      "id": "66eddcff-8b38-4ee6-a386-853cfca73e43",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## TARGET\n### 데이터 저장\n- [중대재해 사고현황](https://docs.google.com/spreadsheets/d/1DE8G5Wkyv8KIexT7TJ3V7yXtyqT_pT7iWW27N5hoCdE/edit?usp=sharing) 전송\n- 10개씩 배치별 순차 처리 ",
+        "height": 504,
+        "width": 556,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        704
+      ],
+      "id": "2c2d9b0f-5977-4e59-864f-b70bb1c18e62",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## 중대재해 사고 자동분석기\n### API 사용\n- [한국산업안전보건공단 홈페이지](https://www.kosha.or.kr/kosha/index.do) 사고사망 속보 데이터\n- [한국산업안전보건공단_사고사망 게시판 정보 조회서비스](https://www.data.go.kr/data/15119137/openapi.do)\n\n### API 발급\n- Data.go.kr 회원가입 - 로그인\n- 활용신청 - API 발급\n- [크롬 웹스토어 JSON-handle](https://chromewebstore.google.com/detail/json-handle/iahnhfdhidomcpggpaimmmahffihkfnj?hl=ko&utm_source=ext_sidebar) 설치\n- [활용신청 현황](https://www.data.go.kr/iim/api/selectAcountList.do) - [미리보기](https://apis.data.go.kr/B552468/news_api02/getNews_api02?serviceKey=7JoLokAR%2FRTfM%2FJwVNepjVIYCxYVM8SoTkD85mCgAXik51SO%2BuM%2Bdmho7kDpSwMO9FX3t1WwxweejH0NGWpYJQ%3D%3D&pageNo=1&numOfRows=10&callApiId=1040) 클릭\n- 저장할 구글 시트 만들기",
+        "height": 316,
+        "width": 876
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2880,
+        368
+      ],
+      "id": "7ee42f32-ecbb-4218-9d82-c3ac3539826d",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {},
+      "id": "6779380c-4e20-42e0-b756-30dc9362cf89",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -2832,
+        848
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## TASK\n### 데이터 분석 및 시각화\n- 구글 시트 도구로 데이터 조회\n- 통계 분석 및 인사이트 도출",
+        "height": 488,
+        "width": 488,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2688,
+        1232
+      ],
+      "id": "6c8ed639-9bca-4533-b5fe-d28e1db8493d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "text": "=INPUT)\n사건번호: {{ $json.arno }} \n키워드: {{ $json.keyword }}\n콘텐츠: {{ $json.contents }}\n\n---\n\nOUTPUT)\n당신은 산업재해 사고 데이터 분석 전문가입니다. 주어진 사고 속보 텍스트에서 구조화된 정보를 정확하게 추출하세요.\n\n추출 규칙:\n\n- arno: 입력된 arno 값 그대로\n- datetime: YYYY-MM-DD HH:MM:SS 형식\n- location: 시도 시군구까지 (예: 경기도 용인시)\n- accident_space: 사고가 발생한 구체적 장소 (예: 공장 지붕 보수 공사현장)\n- cause_of_death: 사망원인을 다음 중 하나로 분류 (떨어짐, 깔림, 뒤집힘, 끼임, 넘어짐, 부딪힘, 감전, 물체에 맞음, 질식, 폭발, 화재, 중독, 기타)\n- original_text: 전체 텍스트 그대로\n\n중요: \n- 순수 JSON만 출력하세요.\n- 마크다운 코드블럭(```)을 절대 사용하지 마세요.",
+        "schemaType": "manual",
+        "inputSchema": "={\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"arno\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"datetime\": {\n\t\t\t\"type\": \"string\",\n\t\t\t\"format\": \"datetime\",\n\t\t\t\"pattern\": \"^\\\\d{4}-\\\\d{2}-\\\\d{2} \\\\d{2}:\\\\d{2}:\\\\d{2}$\",\n\t\t\t\"description\": \"YYYY-MM-DD HH:MM:SS 형식의 날짜시간\"\n\t\t},\n\t\t\"location\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"accident_space\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"cause_of_death\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"original_text\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t},\n\t\"required\": [\"arno\", \"datetime\", \"location\", \"accident_space\", \"cause_of_death\", \"original_text\"]\n}",
+        "options": {
+          "systemPromptTemplate": "You are an expert extraction algorithm. Only extract relevant information from the text. If you do not know the value of an attribute asked to extract, you may omit the attribute's value."
+        }
+      },
+      "id": "76641108-d56a-4544-8383-d08b87459127",
+      "name": "Information Extractor",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        864
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## TARGET\n### 데이터 저장\n- JSON 형식 최종 정리\n- Slack 리포트 전송",
+        "height": 508,
+        "width": 440,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2192,
+        1232
+      ],
+      "id": "7f5d9c9a-60f2-4c4b-a96d-0953e0f0a75b",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09RN4CG6KB",
+          "mode": "list",
+          "cachedResultName": "자동화-클래스"
+        },
+        "messageType": "block",
+        "blocksUi": "={{ $json.output }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -1952,
+        1376
+      ],
+      "id": "32a6b0e7-e4a0-4e86-9c1c-aba26ee6f64b",
+      "name": "Slack",
+      "webhookId": "08cf6ff0-5cb7-4104-b42d-af7fe0b5baeb",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "pUuwYYXjcBnnYwro",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 10,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -544,
+        864
+      ],
+      "id": "aed5e1af-8247-4de2-aba4-4b8d1c826856",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "26cf31e8-7d47-4fb7-bff3-94438ea960d4",
+              "name": "arno",
+              "value": "={{ $json.output.arno }}",
+              "type": "string"
+            },
+            {
+              "id": "633422fb-9c1e-43b8-b3d3-151126648615",
+              "name": "datetime",
+              "value": "={{ $json.output.datetime }}",
+              "type": "string"
+            },
+            {
+              "id": "fef8ac20-b592-475b-91ec-15a36600f9fc",
+              "name": "location",
+              "value": "={{ $json.output.location }}",
+              "type": "string"
+            },
+            {
+              "id": "67982226-39fb-4890-a38d-f55ec7dec122",
+              "name": "accident_space",
+              "value": "={{ $json.output.accident_space }}",
+              "type": "string"
+            },
+            {
+              "id": "7c672c41-7a13-4b28-ae8b-185226522ce1",
+              "name": "cause_of_death",
+              "value": "={{ $json.output.cause_of_death }}",
+              "type": "string"
+            },
+            {
+              "id": "bbb379bd-1a6d-426e-9b80-8956bb0bb7af",
+              "name": "original_text",
+              "value": "={{ $json.output.original_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1104,
+        864
+      ],
+      "id": "511cb9dc-8358-4e59-8b2d-6ad91ba550b7",
+      "name": "Extract Fields"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=PERSONA:\n당신은 중대재해 사고 데이터 분석가입니다. 사고 데이터를 기반으로 현황을 파악하고, 문제 해결을 위한 데이터 분석과 통계적 인사이트를 제공하는 전문가입니다.\n\nTASK:\n- Get Incident Data 구글 시트 도구를 활용하여 중대재해 데이터를 분석하세요\n- 사고 발생 현황을 파악하고, 사망 원인, 지역 분포, 시간대 패턴, 장소 특성 등을 분석하여 인사이트와 개선 제안을 도출하세요\n- 데이터 분석에는 통계적 기법(빈도 분석, 추세 분석, 분포 분석 등)을 활용하세요\n- 결과는 핵심 인사이트와 구체적인 개선 제안으로 요약하세요\n\nTOOLS:\n- Get Incident Data: 구글 시트에서 중대재해 데이터를 조회하는 도구\n- 반드시 이 도구를 먼저 사용하여 실제 데이터를 가져온 후 분석하세요\n\nCONTEXT:\n분석에 사용할 데이터는 Get Incident Data 구글 시트에 저장되어 있으며 다음과 같은 컬럼 구조를 가집니다:\n- arno: 사고 고유 번호\n- datetime: 사고 발생 일시 (YYYY-MM-DD HH:MM:SS)\n- location: 사고 발생 지역 (시도 시군구)\n- accident_space: 사고 발생 장소\n- cause_of_death: 사망 원인 (떨어짐, 깔림, 끼임, 부딪힘 등)\n- original_text: 사고 내용 상세 기술\n\nANALYSIS GUIDELINES:\n사용자 질문에 따라 적절한 분석 수행:\n1. 전체 현황 → 전체 데이터 통계\n2. 특정 기간 → 기간 필터링 분석\n3. 특정 지역 → 지역별 비교\n4. 특정 원인 → 원인별 상세 분석\n5. 트렌드 → 시계열 분석\n\n항상 포함:\n- 구체적 수치 (건수, 비율, 증감률)\n- 비교 분석 (기간/지역/원인별)\n- 패턴 및 특이사항\n- 실행 가능한 개선 제안\n\nCONSTRAINTS:\n- 반드시 Get Incident Data 도구로 실제 데이터를 먼저 조회하세요\n- 가상의 데이터나 예시로 답변하지 마세요\n- 데이터가 없거나 부족한 경우 명시적으로 알려주세요\n- 통계 수치는 정확하게 계산하세요\n- 개선 제안은 구체적이고 실행 가능해야 합니다\n\nVISUALIZATION:\n차트 이미지는 생성하지 않습니다. 대신 텍스트 기반 시각화를 사용하세요:\n\n이모지 바 차트 (비율 표현):\n🔴 떨어짐  ████████████ 40% (15건)\n🟡 깔림    ██████       20% (8건)\n🟢 끼임    ████         13% (6건)\n\n순위 리스트:\n1. 경기도  12건 (32%) 🥇\n2. 서울시   8건 (21%) 🥈\n3. 부산시   5건 (13%) 🥉\n\n트렌드 표현:\n📈 증가: 전월 대비 +15%\n📉 감소: 전년 대비 -8%\n\n시간대 패턴:\n🌅 오전(06-12) ████████ 12건\n🌞 오후(12-18) █████    7건\n🌙 야간(18-24) ██       3건\n\n규칙:\n- █ 문자로 바 차트 표현 (비율에 맞게 길이 조절)\n- 이모지로 카테고리 구분\n- 숫자와 비율 항상 병기\n- 구조화된 들여쓰기 사용\n\nFORMAT:\n답변은 Slack Block Kit JSON 형식으로 작성하세요.\n- 순수 JSON만 출력 (코드 블록이나 추가 설명 없이)\n- 출력 형식: {\"blocks\": [...]}\n- 구조: 헤더 → 전체 현황 → 주요 통계 → 인사이트 → 개선 제안 → 출처\n\n{\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"📊 중대재해 사고 데이터 분석 결과\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*📈 전체 현황*\\n• 총 사고 건수: 15건\\n• 분석 기간: 2025-04-01 ~ 2025-04-30\\n• 사망자 수: 17명\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*🎯 주요 통계*\\n\\n*사망 원인별 분포*\\n🔴 떨어짐  ████████████ 40% (6건)\\n🟡 끼임    ████████     27% (4건)\\n🟢 깔림    ██████       20% (3건)\\n🔵 부딪힘  ████         13% (2건)\\n\\n*지역별 분포 TOP 3*\\n1. 경기도  5건 (33%) 🥇\\n2. 서울시  3건 (20%) 🥈\\n3. 부산시  2건 (13%) 🥉\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*💡 핵심 인사이트*\\n1. 고소작업(떨어짐) 사고가 전체의 40%로 가장 높음\\n2. 건설현장에서 60% 이상 발생\\n3. 오전 시간대(09:00-12:00)에 집중 발생\\n4. 경기도 지역 사고율이 타 지역 대비 2배 높음\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*✅ 개선 제안*\\n1. 고소작업 안전난간 및 안전대 착용 의무화 강화\\n2. 건설현장 안전관리자 배치 확대\\n3. 오전 작업 시작 전 안전 점검 철저화\\n4. 경기도 지역 집중 안전 교육 및 점검 실시\\n5. 끼임 사고 예방을 위한 작업 절차 표준화\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"📅 분석 일시: 2025-05-01 | 데이터 출처: 한국산업안전보건공단\"\n        }\n      ]\n    }\n  ]\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -2624,
+        1376
+      ],
+      "id": "fed65f72-35b8-4adc-b597-68d177e85739",
+      "name": "Accident Analysis Agent"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2832,
+        1040
+      ],
+      "id": "081675d7-fa20-4b91-9f5e-c3c9e16910e8",
+      "name": "Run Every Midnight"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "=무엇을 도와드릴까요?",
+        "options": {
+          "subtitle": "중대재해 사고 데이터 분석 AI입니다.",
+          "title": "안녕하세요! 👋",
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2832,
+        1376
+      ],
+      "id": "e3b39a44-1137-4c28-bc4d-b2e20974f498",
+      "name": "When chat message received",
+      "webhookId": "3bedbc43-24c6-4863-8c6f-80f6122c74ff"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "714ab424-517d-4c4c-85f7-7bfaee6f47a1",
+              "name": "output",
+              "value": "={{ $json.output.replaceAll('```','').replaceAll('json','') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2128,
+        1376
+      ],
+      "id": "e107546c-819b-4215-ab7a-288c8411dc42",
+      "name": "Remove Code Fence"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        992
+      ],
+      "id": "37561648-afed-4382-8017-8f4d454c110f",
+      "name": "Wait",
+      "webhookId": "a7e6c9c4-91c4-48df-a28c-0514e54b72ba"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -2448,
+        1568
+      ],
+      "id": "537c1620-33bb-4f83-b1cb-78343d92508b",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "content": "## TASK\n### API 호출 및 데이터 수집\n- 초기 전체 데이터(~2,678건) 1회 수집\n- 매일 자정 최신 100건 체크 → 신규 사고만 자동 추가",
+        "height": 512,
+        "width": 960,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2688,
+        704
+      ],
+      "id": "d22639fd-d387-4307-9bb2-2d182404dd0a",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "## TRIGGER",
+        "height": 512,
+        "width": 182,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2880,
+        704
+      ],
+      "typeVersion": 1,
+      "id": "8ffd908b-ed4c-461e-8f49-91a67c8e5d47",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "url": "https://apis.data.go.kr/B552468/news_api02/getNews_api02",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "numOfRows",
+              "value": "1000"
+            },
+            {
+              "name": "callApiId",
+              "value": "1040"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "parameters": {
+                "parameters": [
+                  {
+                    "name": "pageNo",
+                    "value": "={{ $pageCount + 1 }}"
+                  }
+                ]
+              },
+              "limitPagesFetched": true,
+              "maxRequests": 3,
+              "requestInterval": 100
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2624,
+        848
+      ],
+      "id": "a414406d-3cd8-40bf-8159-48f235e383c1",
+      "name": "HTTP Request (Before)",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "GYn8Nbae0LdIjZ76",
+          "name": "Serious Accident Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://apis.data.go.kr/B552468/news_api02/getNews_api02",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "numOfRows",
+              "value": "10"
+            },
+            {
+              "name": "callApiId",
+              "value": "1040"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "parameters": {
+                "parameters": [
+                  {
+                    "name": "pageNo",
+                    "value": "={{ $pageCount + 1 }}"
+                  }
+                ]
+              },
+              "limitPagesFetched": true,
+              "maxRequests": 1,
+              "requestInterval": 100
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2624,
+        1040
+      ],
+      "id": "0df69f0f-2384-4474-9968-f3292872bcd3",
+      "name": "HTTP Request (After)",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "GYn8Nbae0LdIjZ76",
+          "name": "Serious Accident Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "h1vHJDkiJ1uRF68o",
+          "mode": "list",
+          "cachedResultName": "Serious Accident",
+          "cachedResultUrl": "/projects/dxmOSdrB8oXX8d4S/datatables/h1vHJDkiJ1uRF68o"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "arno": "={{ $json.arno }}",
+            "keyword": "={{ $json.keyword }}",
+            "contents": "={{ $json.contents.removeTags().replaceAll('&nbsp;','').trim() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "arno",
+              "displayName": "arno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "keyword",
+              "displayName": "keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "contents",
+              "displayName": "contents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -2096,
+        848
+      ],
+      "id": "80a7922a-e2f6-4745-8ced-74005c19447b",
+      "name": "Insert row (Before)"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.items.item",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2448,
+        848
+      ],
+      "id": "e45849f5-1b62-4eb5-b6d1-64505c37670e",
+      "name": "Split Out (Before)"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "body.items.item",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2448,
+        1040
+      ],
+      "id": "652b62bf-03b7-4139-bdea-95c682fdd4d5",
+      "name": "Split Out (After)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "h1vHJDkiJ1uRF68o",
+          "mode": "list",
+          "cachedResultName": "Serious Accident",
+          "cachedResultUrl": "/projects/dxmOSdrB8oXX8d4S/datatables/h1vHJDkiJ1uRF68o"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "arno",
+              "condition": "like",
+              "keyValue": "202510"
+            },
+            {
+              "keyName": "arno",
+              "condition": "like",
+              "keyValue": "202509"
+            }
+          ]
+        },
+        "limit": 100
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -1760,
+        944
+      ],
+      "id": "2ddcf106-822c-4c62-b38d-9f38704172e3",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "operation": "rowNotExists",
+        "dataTableId": {
+          "__rl": true,
+          "value": "h1vHJDkiJ1uRF68o",
+          "mode": "list",
+          "cachedResultName": "Serious Accident",
+          "cachedResultUrl": "/projects/dxmOSdrB8oXX8d4S/datatables/h1vHJDkiJ1uRF68o"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "arno",
+              "keyValue": "={{ $json.arno }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -2272,
+        1040
+      ],
+      "id": "3e6fc067-7520-4ba8-9119-be2f9f511c28",
+      "name": "If row does not exist",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "deleteRows",
+        "dataTableId": {
+          "__rl": true,
+          "value": "h1vHJDkiJ1uRF68o",
+          "mode": "list",
+          "cachedResultName": "Serious Accident",
+          "cachedResultUrl": "/projects/dxmOSdrB8oXX8d4S/datatables/h1vHJDkiJ1uRF68o"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "arno",
+              "condition": "isEmpty"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -1920,
+        1040
+      ],
+      "id": "047f1512-a0b1-41aa-ab06-b1d247492068",
+      "name": "Delete row(s)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4857ef20-56b3-44e5-8851-57a8d8a67900",
+              "leftValue": "={{ $json.datetime }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -928,
+        864
+      ],
+      "id": "e1fd2143-9edb-4934-a882-8d12e6262571",
+      "name": "Datetime Filter"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "h1vHJDkiJ1uRF68o",
+          "mode": "list",
+          "cachedResultName": "Serious Accident",
+          "cachedResultUrl": "/projects/dxmOSdrB8oXX8d4S/datatables/h1vHJDkiJ1uRF68o"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "arno": "={{ $json.arno }}",
+            "keyword": "={{ $json.keyword }}",
+            "contents": "={{ $json.contents?.removeTags()?.replaceAll('&nbsp;','')?.trim() ?? '' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "arno",
+              "displayName": "arno",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "keyword",
+              "displayName": "keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "contents",
+              "displayName": "contents",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        -2096,
+        1040
+      ],
+      "id": "7aa91d94-09e5-4e1e-83e0-8bf447eebf45",
+      "name": "Insert row (After)",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "datetime"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        864
+      ],
+      "id": "aa849688-e4ec-4b85-a922-111bdfbefd7f",
+      "name": "Datatime Sort"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "arno"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        -2272,
+        848
+      ],
+      "id": "762d0318-0dd5-4af9-be95-44c3e0bf19e1",
+      "name": "Article Number Sort"
+    },
+    {
+      "parameters": {
+        "content": "## TRIGGER",
+        "height": 336,
+        "width": 182,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2880,
+        1232
+      ],
+      "typeVersion": 1,
+      "id": "9b7e0c22-a720-4a39-a15b-cb2379a3bd94",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2624,
+        1568
+      ],
+      "id": "8c4fb393-4553-437b-bb3d-5e3b7f0ab652",
+      "name": "Gemini 2.5 Pro",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ePPwdI0uT0G0C906",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1DE8G5Wkyv8KIexT7TJ3V7yXtyqT_pT7iWW27N5hoCdE",
+          "mode": "list",
+          "cachedResultName": "중대재해 사고현황",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DE8G5Wkyv8KIexT7TJ3V7yXtyqT_pT7iWW27N5hoCdE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DE8G5Wkyv8KIexT7TJ3V7yXtyqT_pT7iWW27N5hoCdE/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -2336,
+        1568
+      ],
+      "id": "af61b070-a3c3-4495-bfd7-63a1ce3ceea4",
+      "name": "Get Incident Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        784
+      ],
+      "id": "1fca9e27-7d44-4d61-8e16-dd1a42e4a0b4",
+      "name": "No Operation"
+    },
+    {
+      "parameters": {
+        "message": "={{ $json.chatResponse }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        -1952,
+        1584
+      ],
+      "id": "f990dc20-6ea2-44a1-8838-e1ffe5ddb9bf",
+      "name": "Respond to Chat"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Slack 응답에서 blocks 추출\nconst slackResponse = $input.first().json;\n\nlet blocks;\nif (Array.isArray(slackResponse)) {\n  blocks = slackResponse[0]?.message?.blocks;\n} else if (slackResponse.message?.blocks) {\n  blocks = slackResponse.message.blocks;\n} else if (slackResponse.blocks) {\n  blocks = slackResponse.blocks;\n}\n\nif (!blocks || !Array.isArray(blocks)) {\n  return {\n    json: {\n      chatResponse: slackResponse.text || slackResponse.message?.text || '데이터를 처리할 수 없습니다.'\n    }\n  };\n}\n\n// Slack Block Kit을 텍스트로 변환\nlet text = '';\n\nblocks.forEach(block => {\n  // \"Automated with this n8n workflow\" 링크가 포함된 section은 스킵\n  if (block.type === 'section' && \n      block.text?.text?.includes('Automated with this')) {\n    return; // 이 블록은 건너뛰기\n  }\n  \n  switch(block.type) {\n    case 'header':\n      const headerText = block.text?.text || '';\n      text += `\\n# ${headerText.replace(/:[a-z_]+:/g, '').trim()}\\n\\n`;\n      break;\n    \n    case 'section':\n      const sectionText = block.text?.text || '';\n      const converted = sectionText\n        .replace(/\\*([^*]+)\\*/g, '**$1**')\n        .replace(/:chart_with_upwards_trend:/g, '📈')\n        .replace(/:dart:/g, '🎯')\n        .replace(/:bulb:/g, '💡')\n        .replace(/:white_check_mark:/g, '✅')\n        .replace(/:date:/g, '📅')\n        .replace(/:red_circle:/g, '🔴')\n        .replace(/:large_yellow_circle:/g, '🟡')\n        .replace(/:large_green_circle:/g, '🟢')\n        .replace(/:large_blue_circle:/g, '🔵')\n        .replace(/:large_purple_circle:/g, '🟣')\n        .replace(/:white_circle:/g, '⚪')\n        .replace(/:black_circle:/g, '⚫')\n        .replace(/:first_place_medal:/g, '🥇')\n        .replace(/:second_place_medal:/g, '🥈')\n        .replace(/:third_place_medal:/g, '🥉')\n        .replace(/:sun_with_face:/g, '🌞')\n        .replace(/:sunny:/g, '☀️')\n        .replace(/:crescent_moon:/g, '🌙');\n      \n      text += `${converted}\\n\\n`;\n      break;\n    \n    case 'divider':\n      text += `─────────────────────────────\\n\\n`;\n      break;\n    \n    case 'context':\n      if (block.elements) {\n        block.elements.forEach(el => {\n          const contextText = el.text || '';\n          // context에도 \"Automated\" 링크가 있을 수 있으니 체크\n          if (!contextText.includes('Automated with this')) {\n            text += `_${contextText}_\\n`;\n          }\n        });\n        text += `\\n`;\n      }\n      break;\n  }\n});\n\nreturn {\n  json: {\n    chatResponse: text.trim()\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2128,
+        1584
+      ],
+      "id": "88517530-8c87-4ac7-91fe-49b707ccdd07",
+      "name": "Convert to Text"
+    },
+    {
+      "parameters": {
+        "maxItems": 50,
+        "keep": "lastItems"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1584,
+        864
+      ],
+      "id": "85c95e6e-15aa-45f9-80f5-5fdbda2e0914",
+      "name": "Limit 50"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        1040
+      ],
+      "id": "112d0936-7661-45b8-8e6b-4c548baf7d53",
+      "name": "Gemini 2.0 Flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ePPwdI0uT0G0C906",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request (Before)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Extract Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "No Operation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Fields": {
+      "main": [
+        [
+          {
+            "node": "Datetime Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Every Midnight": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request (After)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Accident Analysis Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Accident Analysis Agent": {
+      "main": [
+        [
+          {
+            "node": "Remove Code Fence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Code Fence": {
+      "main": [
+        [
+          {
+            "node": "Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Accident Analysis Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request (Before)": {
+      "main": [
+        [
+          {
+            "node": "Split Out (Before)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request (After)": {
+      "main": [
+        [
+          {
+            "node": "Split Out (After)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out (Before)": {
+      "main": [
+        [
+          {
+            "node": "Article Number Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out (After)": {
+      "main": [
+        [
+          {
+            "node": "If row does not exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Limit 50",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If row does not exist": {
+      "main": [
+        [
+          {
+            "node": "Insert row (After)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete row(s)": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datetime Filter": {
+      "main": [
+        [
+          {
+            "node": "Datatime Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row (After)": {
+      "main": [
+        [
+          {
+            "node": "Delete row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Datatime Sort": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Article Number Sort": {
+      "main": [
+        [
+          {
+            "node": "Insert row (Before)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.5 Pro": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Accident Analysis Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Incident Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "Accident Analysis Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack": {
+      "main": [
+        [
+          {
+            "node": "Convert to Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to Text": {
+      "main": [
+        [
+          {
+            "node": "Respond to Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit 50": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.0 Flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "379c1f5d-c82c-478e-bf31-8a8a765755f3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed29603280f689e433d162d6eb2f4c0ef594feb614602d9f72d06ccb3a8d3e19"
+  },
+  "id": "NsBAsvTBRj2soHdL",
+  "tags": [
+    {
+      "updatedAt": "2025-10-21T11:32:42.222Z",
+      "createdAt": "2025-10-21T11:32:42.222Z",
+      "id": "NRu8IMSLoDaICN1k",
+      "name": "자동화 클래스"
+    }
+  ]
+}
