@@ -1,0 +1,1628 @@
+{
+  "name": "Personal Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=## 개요\n너는 사용자의 여러 종류의 요청을 처리하는 어시스턴트야. \n너의 역할은 사용자의 요청에 맞는 적절한 도구로 요청을 처리하는 것이야.\n\n사용자의 요청에 의해 \n1) 이메일 기능 (이메일 전송, 이메일 답장, 이메일 삭제, 목록 조회, 초안 작성, 읽음 처리)\n2) 이메일 라벨 (이메일 라벨 추가, 이메일 라벨 제거) \n2) 연락처 기능 (연락처 조회, 수정, 추가)\n3) 스케줄 기능 (캘린더 일정 체크, 일정 조회, 상세내용 조회, 일정 생성, 일정 수정, 일정 삭제)\n4) 문자 발송 기능 (SMS 발송, 카카오톡 발송)\n을 직접 수행해야 해.\n\n## 도구\n- Think Tool: 복합적인 여러가지 업무를 나눠서 처리해야하거나, 진행 간에 막히거나 에러가 발생하는 경우 사용\n- Date Time Tool: 날짜 및 시간과 관련된 모든 경우 사용\n- Calculator Tool: 계산이 필요한 모든 경우 사용\n- Email Tools: 이메일 기능이 필요한 경우 사용 (이메일 전송, 이메일 답장, 이메일 삭제, 목록 조회, 초안 작성, 읽음 처리)\n- Label Tools: 이메일 라벨 기능이 필요한 경우 사용 (이메일 라벨 추가, 이메일 라벨 제거)\n- Contacts Tools: 연락처 기능이 필요한 경우 사용 (연락처 조회, 수정, 추가)\n- Event Tools: 캘린더 기능이 필요한 경우 사용 (캘린더 일정 체크, 일정 조회, 상세내용 조회, 일정 생성, 일정 수정, 일정 삭제)\n- SMS Tools: 문자 발송 기능이 필요한 경우 사용 (SMS 발송, 카카오 친구톡 발송)\n\n### Email Tools 도구 목록\n- Send Email: 새 이메일 전송\n- Reply Email: 수신 메일에 대한 답변 이메일 전송\n- Draft Email: 이메일 초안 작성\n- List Email: 이메일 목록 검색 및 조회\n  - 검색어, 발신자, 날짜 범위 상태로 필터링 가능\n- Mark Email: 메일을 읽음 상태로 표시\n  - MessageID가 필요하므로, List 도구로 먼저 조회 필수\n- Delete Email: 메일 삭제\n  - MessageID가 필요하므로, List 도구로 먼저 조회 필수\n\n#### Email Tools 절대 규칙\n- 현재 날짜/시간: {{ $now }}\n- 모든 이메일은 전문적으로 HTML 형식으로 작성할 것\n- 모든 이메일은 \"Datawave\"로 서명할 것\n\n### Label Tools 도구 목록\n- Add Label: 메일에 라벨 추가\n  - MessageID가 필요하므로, List 도구로 먼저 조회 필수\n  - 추가 가능한 라벨: 결제알림, 광고알림, 뉴스레터, 보안알림, 업무메일\n  - 보안알림: Label_1597234543685942092\t\n  - 결제알림: Label_1799038423469103139\n  - 뉴스레터: Label_4049371095390126770\n  - 업무메일: Label_4669846905685131528\n  - 광고알림: Label_969110601076925077\n- Removal Label: 메일에 라벨 삭제\n  - MessageID가 필요하므로, List 도구로 먼저 조회 필수\n  - 제거 가능한 라벨: 결제알림, 광고알림, 뉴스레터, 보안알림, 업무메일\n  - 보안알림: Label_1597234543685942092\t\n  - 결제알림: Label_1799038423469103139\n  - 뉴스레터: Label_4049371095390126770\n  - 업무메일: Label_4669846905685131528\n  - 광고알림: Label_969110601076925077\n\n#### Label Tools 절대 규칙\n- 현재 날짜/시간: {{ $now }}\n- 존재하지 않는 라벨을 추가하려고 하면 먼저 사용자에게 라벨 생성을 요청할 것\n\n### Contacts Tools 도구 목록\n- Read Contacts: 연락처 정보 조회\n- Update Contact: 연락처 정보 업데이트\n- Append Contact: 연락처 신규 추가\n\n### Contacts Tools: 절대 규칙\n- 현재 날짜/시간: {{ $now }}\n\n### Event Tools 도구 목록\n- Check Event: 특정 시간대 일정 체크\n- List Event: 일정 조회시 사용\n- Create Event: 이벤트를 생성시 사용\n- View Event: 특정 이벤트 상세 조회\n  - Event ID가 필요하므로,List Event 도구로 먼저 조회 필수\n- Update Event: 특정 이벤트 내용 수정\n  - Event ID가 필요하므로,List Event 도구로 먼저 조회 필수\n- Delete Event: 특정 이벤트 삭제\n  - Event ID가 필요하므로,List Event 도구로 먼저 조회 필수\n\n## Event Tool 절대 규칙\n- 현재 날짜/시간: {{ $now }}\n- 이벤트의 지속 시간이 지정되지 않은 경우 1시간으로 가정\n\n### SMS Tools 도구 목록\n- Solapi SMS: 수신자에게 문자 메시지 발송\n- Solapi Friends: 수신자에게 카카오 친구톡 발송\n\n## SMS Tools 절대 규칙\n- 현재 날짜/시간: {{ $now }}\n- 수신자 번호가 지정되지 않은 경우 사용자에게 요청합니다.\n- 카카오 친구톡 버튼 형식 (웹링크만 지원):\n  - 형식: [{\"buttonName\":\"버튼명\",\"buttonType\":\"WL\",\"linkMo\":\"https://...\"}]\n  - 예시: [{\"buttonName\":\"홈페이지\",\"buttonType\":\"WL\",\"linkMo\":\"https://datawave.kr\"}]\n  - 전화 버튼: {\"buttonName\":\"전화하기\",\"buttonType\":\"WL\",\"linkMo\":\"tel:01012345678\"}\n  - 버튼 없으면: []\n  - 최대 5개, 버튼명 14자 이내\n  - linkMo 필드 필수 (모바일 웹 URL)\n\n## 작업 원칙\n- 절대 직접 답변하지 말 것\n- 모든 작업은 반드시 해당 도구를 통해 수행\n- 도구 호출 결과만 사용자에게 전달\n- 추측이나 가정으로 답변 금지\n\n## 규칙\n- 다음 작업 수행 시 먼저 Contacts Tool로 연락처 정보를 조회한 후 진행:\n  - 이메일 전송\n  - 이메일 초안 작성\n  - 참석자를 포함한 캘린더 이벤트 생성\n  - 문자 메시지 발송\n- 연락처 정보가 없으면 사용자에게 직접 입력 요청\n\n## 세부 지침\n1) 사용자 요청에 따라 필요한 도구를 호출할 것\n2) 작업을 처리하기 전에 Think 도구를 사용하여 계획을 수립할 것.\n3) Think 도구를 이용해서 매 단계별로 올바른 단계를 수행했는지 확인할 것. 매번 호출해야함.\n4) 도구 호출 없이는 절대 답변하지 말 것\n\n## 예시\n- 입력: Daniel에게 미팅 일정 문의 이메일을 보내야 한다.\n  - 작업: Think로 작업 계획 수립\n  - 작업: Read Contacts를 사용하여 Daniel의 이메일 주소를 가져온다.\n  - 작업: Send Email를 사용하여 이메일을 전송한다. \"Daniel에게 이메일을 보내 미팅을 잡을 날짜/시간 물어본다. 그의 이메일 주소는 [이메일 주소]입니다\"\n- 출력: Daniel에게 이메일이 전송되었어요. 다른 도움이 필요하세요?",
+          "maxIterations": 20
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        528,
+        -112
+      ],
+      "id": "8c367cb2-8ccc-4d6a-9b42-e65365cf848c",
+      "name": "Global AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        112
+      ],
+      "id": "ea917770-f733-4af3-9250-71fc883532ac",
+      "name": "Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        480,
+        112
+      ],
+      "id": "3ee3216c-69d8-4962-a6a4-eca8cf0f1474",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        -112
+      ],
+      "id": "99b9810b-10d7-46b6-8dc7-99205cc97883",
+      "name": "When chat message received",
+      "webhookId": "83178e75-3a70-450d-910b-3f3a1eedd8d0"
+    },
+    {
+      "parameters": {
+        "options": {
+          "timezone": "Asia/Seoul"
+        }
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        736,
+        112
+      ],
+      "id": "07964623-7858-4341-b151-6021fcc66b1c",
+      "name": "Date Time"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', `수신자 이메일 주소`, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', `이메일 제목 (형식: [글머리 단어] 이메일 제목, 예시: [문의] 프로젝트 다음 미팅 날짜 및 안건 )`, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `HTML 문자열로 작성된 이메일 본문`, 'string') }}",
+        "options": {
+          "appendAttribution": false,
+          "bccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('BCC', `숨은 참조 이메일 주소`, 'string') }}",
+          "ccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('CC', `참조 이메일 주소`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        496
+      ],
+      "id": "ba6b03ea-c18f-4827-adb2-1fdd7ae18f6b",
+      "name": "Send Email",
+      "webhookId": "9ff4db97-1a33-455e-80bd-b7cd429a96c4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V1EU2knokbFJGeti",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `답장 보낼 대상 이메일 메세지 ID`, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `HTML 문자열로 작성된 이메일 본문`, 'string') }}",
+        "options": {
+          "appendAttribution": false,
+          "bccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('BCC', `답장 보낼 숨은 참조 이메일 주소`, 'string') }}",
+          "ccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('CC', `답장 보낼 참조 이메일 주소`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        48,
+        496
+      ],
+      "id": "c8c810e8-ac15-44a8-b0f1-60dfa4928d96",
+      "name": "Reply Email",
+      "webhookId": "8efff97e-01ae-4198-894d-542379fce027",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V1EU2knokbFJGeti",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', `이메일 제목 (형식: [글머리 단어] 이메일 제목, 예시: [문의] 프로젝트 다음 미팅 날짜 및 안건 )`, 'string') }}",
+        "emailType": "html",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `HTML 문자열로 작성된 이메일 본문`, 'string') }}",
+        "options": {
+          "bccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('BCC', `숨은 참조 이메일 주소`, 'string') }}",
+          "ccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('CC', `참조 이메일 주소`, 'string') }}",
+          "threadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Thread_ID', `이메일 스레드 ID`, 'string') }}",
+          "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To_Email', `수신자 이메일 주소`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        176,
+        496
+      ],
+      "id": "21489d24-c99b-4976-a906-9ae7f6c401fb",
+      "name": "Draft Email",
+      "webhookId": "8efff97e-01ae-4198-894d-542379fce027",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V1EU2knokbFJGeti",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Limit', `조회할 이메일 개수`, 'number') }}",
+        "filters": {
+          "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search', `이메일 검색어 필터링`, 'string') }}",
+          "sender": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sender', `보낸 사람만 조회하도록 필터링`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        688
+      ],
+      "id": "e7138b73-aeeb-4ab6-8411-dbcc21d66898",
+      "name": "List Email",
+      "webhookId": "8efff97e-01ae-4198-894d-542379fce027",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V1EU2knokbFJGeti",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `이메일 메세지 ID`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        48,
+        688
+      ],
+      "id": "45b5c242-1ee6-44ab-84fd-835ad66ce90e",
+      "name": "Mark Email",
+      "webhookId": "4c89e39d-52ad-4063-8608-b0405f47086e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V1EU2knokbFJGeti",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `삭제할 메일 ID`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        176,
+        688
+      ],
+      "id": "a0f1d0de-8494-487c-b8ea-fdc2f32016e0",
+      "name": "Delete Email",
+      "webhookId": "4c89e39d-52ad-4063-8608-b0405f47086e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V1EU2knokbFJGeti",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://daniel8824.app.n8n.cloud/mcp/email",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        864,
+        112
+      ],
+      "id": "21f3646f-1531-44ab-9d31-353b6bb5046b",
+      "name": "Email Tools",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `라벨을 추가할 메일 ID`, 'string') }}",
+        "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', `보안알림: Label_1597234543685942092\t\n결제알림: Label_1799038423469103139\n뉴스레터: Label_4049371095390126770\n업무메일: Label_4669846905685131528\n광고알림: Label_969110601076925077`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        496
+      ],
+      "id": "20ed56bf-5aee-452d-847d-05033bc4020e",
+      "name": "Add Label",
+      "webhookId": "4c89e39d-52ad-4063-8608-b0405f47086e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V1EU2knokbFJGeti",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "email"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        304
+      ],
+      "id": "c224a8fa-10cc-4582-b0d4-f666ac0782b5",
+      "name": "Email MCP Server",
+      "webhookId": "94add959-32c8-4143-b430-42c42a8c5dbd",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "label"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        288,
+        304
+      ],
+      "id": "570e56f2-71f7-4b94-926a-8f8223d758ab",
+      "name": "Label MCP Server",
+      "webhookId": "94add959-32c8-4143-b430-42c42a8c5dbd",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://daniel8824.app.n8n.cloud/mcp/label",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        992,
+        112
+      ],
+      "id": "1dc5655a-66c9-4a31-91d3-4bad9852ffd6",
+      "name": "Label Tools",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "removeLabels",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', `라벨을 삭제할 메일 ID`, 'string') }}",
+        "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', `보안알림: Label_1597234543685942092\t\n결제알림: Label_1799038423469103139\n뉴스레터: Label_4049371095390126770\n업무메일: Label_4669846905685131528\n광고알림: Label_969110601076925077`, 'string') }}"
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        464,
+        496
+      ],
+      "id": "7dee8da8-544a-4b7a-90cc-f66b5d2d59b6",
+      "name": "Remove Label",
+      "webhookId": "4c89e39d-52ad-4063-8608-b0405f47086e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "V1EU2knokbFJGeti",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "collectionName": "chat_memory",
+        "databaseName": "n8n_agent",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryMongoDbChat",
+      "typeVersion": 1,
+      "position": [
+        352,
+        112
+      ],
+      "id": "05f51489-efb7-4792-82db-9cc26dd326f5",
+      "name": "MongoDB Chat Memory",
+      "credentials": {
+        "mongoDb": {
+          "id": "2AdbDRJTuMgRx1sH",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        192,
+        112
+      ],
+      "id": "76b5fb38-2432-41e1-a2fc-ba77cda58945",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "RA0cx6y3p3eEGdCW",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "worksheet",
+        "operation": "readRows",
+        "workbook": {
+          "__rl": true,
+          "value": "1B4821862FFF2B17!s8fe0955155e14a01ba069573e77824e7",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://onedrive.live.com/personal/1b4821862fff2b17/_layouts/15/doc.aspx?resid=8fe09551-55e1-4a01-ba06-9573e77824e7&cid=1b4821862fff2b17"
+        },
+        "worksheet": {
+          "__rl": true,
+          "value": "{00000000-0001-0000-0000-000000000000}",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://onedrive.live.com/personal/1b4821862fff2b17/_layouts/15/doc.aspx?resid=8fe09551-55e1-4a01-ba06-9573e77824e7&cid=1b4821862fff2b17&activeCell=%EC%8B%9C%ED%8A%B81!A1"
+        },
+        "useRange": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Select_a_Range', `연락처 조회 범위`, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftExcelTool",
+      "typeVersion": 2.2,
+      "position": [
+        1696,
+        496
+      ],
+      "id": "38323264-8534-4fa1-8392-70b590f0bb21",
+      "name": "Read Contacts",
+      "credentials": {
+        "microsoftExcelOAuth2Api": {
+          "id": "Orcam3KG1zEbj4Mq",
+          "name": "Microsoft Excel account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "worksheet",
+        "operation": "update",
+        "workbook": {
+          "__rl": true,
+          "value": "1B4821862FFF2B17!s8fe0955155e14a01ba069573e77824e7",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://onedrive.live.com/personal/1b4821862fff2b17/_layouts/15/doc.aspx?resid=8fe09551-55e1-4a01-ba06-9573e77824e7&cid=1b4821862fff2b17"
+        },
+        "worksheet": {
+          "__rl": true,
+          "value": "{00000000-0001-0000-0000-000000000000}",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://onedrive.live.com/personal/1b4821862fff2b17/_layouts/15/doc.aspx?resid=8fe09551-55e1-4a01-ba06-9573e77824e7&cid=1b4821862fff2b17&activeCell=%EC%8B%9C%ED%8A%B81!A1"
+        },
+        "columnToMatchOn": "name",
+        "valueToMatchOn": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Value_of_Column_to_Match_On', `필터를 위해 Equals 조건으로 매칭할 name 값`, 'string') }}",
+        "fieldsUi": {
+          "values": [
+            {
+              "column": "phone",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', `업데이트할 휴대폰 번호`, 'string') }}"
+            },
+            {
+              "column": "email",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values1_Value', `업데이트할 이메일 주소`, 'string') }}"
+            },
+            {
+              "column": "department",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values2_Value', `업데이트할 부서 소속`, 'string') }}"
+            },
+            {
+              "column": "task_completion",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values3_Value', `업데이트 작업 완료 여부`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftExcelTool",
+      "typeVersion": 2.2,
+      "position": [
+        1984,
+        496
+      ],
+      "id": "fe0e398e-3acc-414b-b8e8-fbc2c3ed7340",
+      "name": "Update Contacts",
+      "credentials": {
+        "microsoftExcelOAuth2Api": {
+          "id": "Orcam3KG1zEbj4Mq",
+          "name": "Microsoft Excel account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "worksheet",
+        "operation": "append",
+        "workbook": {
+          "__rl": true,
+          "value": "1B4821862FFF2B17!s8fe0955155e14a01ba069573e77824e7",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://onedrive.live.com/personal/1b4821862fff2b17/_layouts/15/doc.aspx?resid=8fe09551-55e1-4a01-ba06-9573e77824e7&cid=1b4821862fff2b17"
+        },
+        "worksheet": {
+          "__rl": true,
+          "value": "{00000000-0001-0000-0000-000000000000}",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://onedrive.live.com/personal/1b4821862fff2b17/_layouts/15/doc.aspx?resid=8fe09551-55e1-4a01-ba06-9573e77824e7&cid=1b4821862fff2b17&activeCell=%EC%8B%9C%ED%8A%B81!A1"
+        },
+        "fieldsUi": {
+          "values": [
+            {
+              "column": "name",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', `연락처 대상자 이름`, 'string') }}"
+            },
+            {
+              "column": "phone",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values1_Value', `연락처 대상자 휴대폰 번호`, 'string') }}"
+            },
+            {
+              "column": "email",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values2_Value', `연락처 대상자 이메일`, 'string') }}"
+            },
+            {
+              "column": "department",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values3_Value', `연락처 대상자 부서`, 'string') }}"
+            },
+            {
+              "column": "task_completion",
+              "fieldValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values4_Value', `연락처 대상자 작업 완료 여부`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftExcelTool",
+      "typeVersion": 2.2,
+      "position": [
+        1840,
+        496
+      ],
+      "id": "35f4b35a-966e-47c5-bb4a-2ccbe4be7a25",
+      "name": "Append Contacts",
+      "credentials": {
+        "microsoftExcelOAuth2Api": {
+          "id": "Orcam3KG1zEbj4Mq",
+          "name": "Microsoft Excel account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://daniel8824.app.n8n.cloud/mcp/contacts",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        112
+      ],
+      "id": "6cf58410-909c-45b1-a00b-07c588434231",
+      "name": "Contacts Tools",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "event"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        304
+      ],
+      "id": "3eab8e48-6eef-41e1-84e7-afdf8372aae4",
+      "name": "Event MCP Server",
+      "webhookId": "94add959-32c8-4143-b430-42c42a8c5dbd",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://daniel8824.app.n8n.cloud/mcp/event",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        112
+      ],
+      "id": "f05234bd-35b8-4594-b55a-1ed2ae627af5",
+      "name": "Event Tools",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "value": "i6435862@gmail.com",
+          "mode": "list",
+          "cachedResultName": "i6435862@gmail.com"
+        },
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start_Time', `확인 시작 시간 (사용자 요청에 따라 결정)`, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End_Time', `확인 종료 시간 (사용자 요청에 따라 결정)`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1040,
+        496
+      ],
+      "id": "8ad55fa5-a5b4-4346-a163-639522599a8e",
+      "name": "Check Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "W6JuRay10hnrXIMV",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "i6435862@gmail.com",
+          "mode": "list",
+          "cachedResultName": "i6435862@gmail.com"
+        },
+        "limit": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Limit', `조회할 일정 개수`, 'number') }}",
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', `확인 시작 시간 (사용자 요청에 따라 결정)`, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', `확인 종료 시간 (사용자 요청에 따라 결정)`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1152,
+        496
+      ],
+      "id": "a8fa96f1-a806-4c4a-b6cf-83631eaa5669",
+      "name": "List Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "W6JuRay10hnrXIMV",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "calendar": {
+          "__rl": true,
+          "value": "i6435862@gmail.com",
+          "mode": "list",
+          "cachedResultName": "i6435862@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', `스케줄 ID`, 'string') }}",
+        "updateFields": {
+          "attendeesUi": {
+            "values": {
+              "attendees": [
+                "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('attendees0_Attendees', `추가할 참석자`, 'string') }}"
+              ]
+            }
+          },
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', `수정할 스케줄 설명`, 'string') }}",
+          "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', `수정할 종료 일자 (e.g. 2025-08-11 00:00:00)`, 'string') }}",
+          "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location', `수정한 스케줄 장소`, 'string') }}",
+          "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', `수정할 시작 일자 (e.g. 2025-08-18 00:00:00)`, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', `수정할 스케줄 요약`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1152,
+        672
+      ],
+      "id": "573641d5-cdba-4877-bc6e-487c112c88c1",
+      "name": "Update Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "W6JuRay10hnrXIMV",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "i6435862@gmail.com",
+          "mode": "list",
+          "cachedResultName": "i6435862@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', `삭제할 스케줄 ID`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1264,
+        672
+      ],
+      "id": "d1841699-5f9d-494b-bae8-f86ba5a02515",
+      "name": "Delete Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "W6JuRay10hnrXIMV",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "i6435862@gmail.com",
+          "mode": "list",
+          "cachedResultName": "i6435862@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', `스케줄 시작일자 (e.g. 2025-08-11 00:00:00)`, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', `스케줄 종료일자(e.g. 2025-08-11  00:00:00)`, 'string') }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('attendees0_Attendees', `스케줄 참석자`, 'string') }}"
+          ],
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', `스케줄 설명`, 'string') }}",
+          "location": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Location', `스케줄 장소`, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', `스케줄 요약`, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1040,
+        672
+      ],
+      "id": "f7e87a46-6158-4b76-adbd-c43303ed2d86",
+      "name": "Create Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "W6JuRay10hnrXIMV",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "value": "i6435862@gmail.com",
+          "mode": "list",
+          "cachedResultName": "i6435862@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', `스케줄 ID`, 'string') }}",
+        "options": {
+          "returnNextInstance": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_Next_Instance_of_Recurring_Event', `반복 혹은 단독 일정 확인`, 'boolean') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1264,
+        496
+      ],
+      "id": "07bb6fa9-bbdd-466a-91f2-e8930b3efe86",
+      "name": "View Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "W6JuRay10hnrXIMV",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "sms"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        304
+      ],
+      "id": "b9228e69-5b4c-4cb2-b35f-80deadc0d7b2",
+      "name": "SMS MCP Server",
+      "webhookId": "94add959-32c8-4143-b430-42c42a8c5dbd",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://daniel8824.app.n8n.cloud/mcp/sms",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        112
+      ],
+      "id": "0c4f5bbd-04fb-4d9d-bf13-a02c6d8171b9",
+      "name": "SMS Tools",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "apiKey",
+        "to": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', `수신자 휴대폰 번호`, 'string') }}",
+        "from": "01032018824",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', `SMS 내용`, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', `SMS 제목`, 'string') }}"
+      },
+      "type": "n8n-nodes-solapi.solapiTool",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        496
+      ],
+      "id": "f72065ca-a9ad-4635-96fe-d9c773eb92ec",
+      "name": "Solapi SMS",
+      "credentials": {
+        "solapiApiKeyApi": {
+          "id": "P677HmMeytcV4v0W",
+          "name": "Solapi Key account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "assistant",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        912,
+        -112
+      ],
+      "id": "f177d504-65c4-479d-acc2-825924f1cfce",
+      "name": "Webhook",
+      "webhookId": "da3ff142-99e7-45c7-9297-463531c8dce9"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"ko\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Personal AI Assistant | 스마트 업무 자동화 솔루션</title>\n    \n    <!-- Google Fonts -->\n    <link href=\"https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap\" rel=\"stylesheet\">\n    \n    <!-- Font Awesome -->\n    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">\n\n    <style>\n        :root {\n            --primary: #4f46e5;\n            --primary-dark: #4338ca;\n            --primary-light: #6366f1;\n            --secondary: #06b6d4;\n            --accent: #8b5cf6;\n            --success: #10b981;\n            --warning: #f59e0b;\n            --danger: #ef4444;\n            \n            --bg-primary: #ffffff;\n            --bg-secondary: #f8fafc;\n            --bg-tertiary: #f1f5f9;\n            \n            --text-primary: #0f172a;\n            --text-secondary: #475569;\n            --text-tertiary: #94a3b8;\n            \n            --border: #e2e8f0;\n            --border-light: #f1f5f9;\n            \n            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);\n            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);\n            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);\n            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);\n            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);\n        }\n\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n\n        body {\n            font-family: 'Pretendard', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;\n            background: var(--bg-primary);\n            color: var(--text-primary);\n            line-height: 1.6;\n            font-size: 16px;\n            -webkit-font-smoothing: antialiased;\n            -moz-osx-font-smoothing: grayscale;\n        }\n\n        .container {\n            max-width: 1280px;\n            margin: 0 auto;\n            padding: 0 32px;\n        }\n\n        /* Header */\n        header {\n            position: fixed;\n            top: 0;\n            left: 0;\n            right: 0;\n            background: rgba(255, 255, 255, 0.98);\n            backdrop-filter: blur(12px);\n            border-bottom: 1px solid var(--border-light);\n            z-index: 1000;\n            transition: all 0.3s ease;\n        }\n\n        header.scrolled {\n            box-shadow: var(--shadow-md);\n        }\n\n        .header-content {\n            display: flex;\n            align-items: center;\n            justify-content: space-between;\n            height: 72px;\n        }\n\n        .logo {\n            display: flex;\n            align-items: center;\n            gap: 12px;\n            font-size: 20px;\n            font-weight: 700;\n            color: var(--text-primary);\n            text-decoration: none;\n        }\n\n        .logo-icon {\n            width: 36px;\n            height: 36px;\n            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);\n            border-radius: 8px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            color: white;\n            font-size: 18px;\n        }\n\n        .nav-links {\n            display: flex;\n            align-items: center;\n            gap: 40px;\n        }\n\n        .nav-links a {\n            color: var(--text-secondary);\n            text-decoration: none;\n            font-size: 15px;\n            font-weight: 500;\n            transition: color 0.2s ease;\n            letter-spacing: -0.01em;\n        }\n\n        .nav-links a:hover {\n            color: var(--primary);\n        }\n\n        .btn-header {\n            padding: 10px 20px;\n            background: var(--primary);\n            color: #ffffff !important;\n            border-radius: 8px;\n            font-size: 14px;\n            font-weight: 600;\n            transition: all 0.2s ease;\n            text-decoration: none;\n        }\n\n        .btn-header:hover {\n            background: var(--primary-dark);\n            color: #ffffff !important;\n            transform: translateY(-1px);\n            box-shadow: var(--shadow-md);\n        }\n\n        /* Hero Section */\n        .hero {\n            padding: 160px 0 100px;\n            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);\n        }\n\n        .hero-content {\n            max-width: 900px;\n            margin: 0 auto;\n            text-align: center;\n        }\n\n        .hero-badge {\n            display: inline-flex;\n            align-items: center;\n            gap: 8px;\n            padding: 8px 16px;\n            background: var(--bg-primary);\n            border: 1px solid var(--border);\n            border-radius: 100px;\n            font-size: 13px;\n            font-weight: 600;\n            color: var(--primary);\n            margin-bottom: 24px;\n        }\n\n        .hero-badge i {\n            font-size: 14px;\n        }\n\n        .hero h1 {\n            font-size: 56px;\n            font-weight: 800;\n            line-height: 1.15;\n            letter-spacing: -0.03em;\n            margin-bottom: 24px;\n            color: var(--text-primary);\n        }\n\n        .hero h1 .highlight {\n            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);\n            -webkit-background-clip: text;\n            -webkit-text-fill-color: transparent;\n            background-clip: text;\n        }\n\n        .hero-description {\n            font-size: 20px;\n            line-height: 1.7;\n            color: var(--text-secondary);\n            margin-bottom: 40px;\n            font-weight: 400;\n        }\n\n        .cta-buttons {\n            display: flex;\n            gap: 16px;\n            justify-content: center;\n            align-items: center;\n        }\n\n        .btn {\n            display: inline-flex;\n            align-items: center;\n            gap: 10px;\n            padding: 14px 28px;\n            border-radius: 10px;\n            font-size: 15px;\n            font-weight: 600;\n            text-decoration: none;\n            transition: all 0.2s ease;\n            letter-spacing: -0.01em;\n        }\n\n        .btn-primary {\n            background: var(--primary);\n            color: white;\n            box-shadow: var(--shadow-lg);\n        }\n\n        .btn-primary:hover {\n            background: var(--primary-dark);\n            transform: translateY(-2px);\n            box-shadow: var(--shadow-xl);\n        }\n\n        .btn-secondary {\n            background: white;\n            color: var(--text-primary);\n            border: 1px solid var(--border);\n        }\n\n        .btn-secondary:hover {\n            background: var(--bg-secondary);\n            border-color: var(--text-tertiary);\n        }\n\n        /* Features Section */\n        .features {\n            padding: 100px 0;\n            background: var(--bg-primary);\n        }\n\n        .section-header {\n            text-align: center;\n            max-width: 800px;\n            margin: 0 auto 64px;\n        }\n\n        .section-badge {\n            display: inline-block;\n            padding: 6px 14px;\n            background: #ede9fe;\n            color: var(--primary);\n            border-radius: 6px;\n            font-size: 13px;\n            font-weight: 600;\n            margin-bottom: 16px;\n            letter-spacing: 0.02em;\n        }\n\n        .section-title {\n            font-size: 42px;\n            font-weight: 800;\n            line-height: 1.2;\n            letter-spacing: -0.02em;\n            margin-bottom: 16px;\n            color: var(--text-primary);\n        }\n\n        .section-description {\n            font-size: 18px;\n            line-height: 1.7;\n            color: var(--text-secondary);\n            font-weight: 400;\n        }\n\n        .features-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));\n            gap: 24px;\n        }\n\n        .feature-card {\n            background: var(--bg-primary);\n            border: 1px solid var(--border);\n            border-radius: 16px;\n            padding: 32px;\n            transition: all 0.3s ease;\n        }\n\n        .feature-card:hover {\n            border-color: var(--primary);\n            box-shadow: var(--shadow-xl);\n            transform: translateY(-4px);\n        }\n\n        .feature-icon {\n            width: 56px;\n            height: 56px;\n            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);\n            border-radius: 12px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            font-size: 26px;\n            margin-bottom: 20px;\n        }\n\n        .feature-card h3 {\n            font-size: 20px;\n            font-weight: 700;\n            margin-bottom: 12px;\n            color: var(--text-primary);\n            letter-spacing: -0.01em;\n        }\n\n        .feature-card p {\n            font-size: 15px;\n            line-height: 1.7;\n            color: var(--text-secondary);\n            margin-bottom: 20px;\n        }\n\n        .feature-tags {\n            display: flex;\n            flex-wrap: wrap;\n            gap: 8px;\n        }\n\n        .tag {\n            padding: 6px 12px;\n            background: var(--bg-secondary);\n            border: 1px solid var(--border);\n            border-radius: 6px;\n            font-size: 12px;\n            font-weight: 500;\n            color: var(--text-secondary);\n        }\n\n        /* Use Cases */\n        .use-cases {\n            padding: 100px 0;\n            background: var(--bg-secondary);\n        }\n\n        .use-cases-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));\n            gap: 24px;\n        }\n\n        .use-case-card {\n            background: var(--bg-primary);\n            border: 1px solid var(--border);\n            border-radius: 16px;\n            padding: 32px;\n            text-align: center;\n            transition: all 0.3s ease;\n        }\n\n        .use-case-card:hover {\n            transform: translateY(-4px);\n            box-shadow: var(--shadow-lg);\n            border-color: var(--secondary);\n        }\n\n        .use-case-icon {\n            width: 72px;\n            height: 72px;\n            background: linear-gradient(135deg, #e0f2fe 0%, #ddd6fe 100%);\n            border-radius: 50%;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            font-size: 32px;\n            margin: 0 auto 20px;\n        }\n\n        .use-case-card h3 {\n            font-size: 18px;\n            font-weight: 700;\n            margin-bottom: 12px;\n            color: var(--text-primary);\n        }\n\n        .use-case-card p {\n            font-size: 14px;\n            line-height: 1.6;\n            color: var(--text-secondary);\n        }\n\n        /* How it Works */\n        .how-it-works {\n            padding: 100px 0;\n            background: var(--bg-primary);\n        }\n\n        .steps-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));\n            gap: 32px;\n            margin-top: 64px;\n        }\n\n        .step-card {\n            position: relative;\n            text-align: center;\n        }\n\n        .step-number {\n            width: 64px;\n            height: 64px;\n            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);\n            border-radius: 50%;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            font-size: 28px;\n            font-weight: 800;\n            color: white;\n            margin: 0 auto 24px;\n            box-shadow: var(--shadow-lg);\n        }\n\n        .step-card h3 {\n            font-size: 20px;\n            font-weight: 700;\n            margin-bottom: 12px;\n            color: var(--text-primary);\n        }\n\n        .step-card p {\n            font-size: 15px;\n            line-height: 1.7;\n            color: var(--text-secondary);\n        }\n\n        /* Stats */\n        .stats {\n            padding: 80px 0;\n            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);\n        }\n\n        .stats-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n            gap: 48px;\n        }\n\n        .stat-item {\n            text-align: center;\n            color: white;\n        }\n\n        .stat-number {\n            font-size: 48px;\n            font-weight: 800;\n            margin-bottom: 8px;\n            letter-spacing: -0.02em;\n        }\n\n        .stat-label {\n            font-size: 16px;\n            opacity: 0.9;\n            font-weight: 500;\n        }\n\n        /* CTA Section */\n        .cta-section {\n            padding: 100px 0;\n            background: var(--bg-secondary);\n        }\n\n        .cta-card {\n            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);\n            border-radius: 24px;\n            padding: 80px 60px;\n            text-align: center;\n            position: relative;\n            overflow: hidden;\n            box-shadow: var(--shadow-xl);\n        }\n\n        .cta-card::before {\n            content: '';\n            position: absolute;\n            top: -50%;\n            right: -50%;\n            width: 200%;\n            height: 200%;\n            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);\n        }\n\n        .cta-card h2 {\n            font-size: 40px;\n            font-weight: 800;\n            color: white;\n            margin-bottom: 16px;\n            letter-spacing: -0.02em;\n            position: relative;\n            z-index: 1;\n        }\n\n        .cta-card p {\n            font-size: 18px;\n            color: rgba(255, 255, 255, 0.95);\n            margin-bottom: 32px;\n            position: relative;\n            z-index: 1;\n        }\n\n        .cta-card .btn {\n            background: white;\n            color: var(--primary);\n            position: relative;\n            z-index: 1;\n        }\n\n        .cta-card .btn:hover {\n            background: var(--bg-secondary);\n        }\n\n        /* Footer */\n        footer {\n            padding: 80px 0 40px;\n            background: var(--bg-primary);\n            border-top: 1px solid var(--border);\n        }\n\n        .footer-content {\n            display: grid;\n            grid-template-columns: 2fr 1fr 1fr 1fr;\n            gap: 64px;\n            margin-bottom: 48px;\n        }\n\n        .footer-brand {\n            display: flex;\n            flex-direction: column;\n            gap: 16px;\n        }\n\n        .footer-logo {\n            display: flex;\n            align-items: center;\n            gap: 12px;\n            font-size: 20px;\n            font-weight: 700;\n            color: var(--text-primary);\n        }\n\n        .footer-logo-icon {\n            width: 36px;\n            height: 36px;\n            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);\n            border-radius: 8px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            color: white;\n            font-size: 18px;\n        }\n\n        .footer-brand p {\n            color: var(--text-secondary);\n            font-size: 14px;\n            line-height: 1.7;\n        }\n\n        .footer-links h4 {\n            font-size: 14px;\n            font-weight: 700;\n            color: var(--text-primary);\n            margin-bottom: 16px;\n            text-transform: uppercase;\n            letter-spacing: 0.05em;\n        }\n\n        .footer-links ul {\n            list-style: none;\n        }\n\n        .footer-links li {\n            margin-bottom: 12px;\n        }\n\n        .footer-links a {\n            color: var(--text-secondary);\n            text-decoration: none;\n            font-size: 14px;\n            transition: color 0.2s ease;\n        }\n\n        .footer-links a:hover {\n            color: var(--primary);\n        }\n\n        .footer-bottom {\n            padding-top: 32px;\n            border-top: 1px solid var(--border);\n            display: flex;\n            justify-content: space-between;\n            align-items: center;\n        }\n\n        .footer-bottom p {\n            color: var(--text-tertiary);\n            font-size: 14px;\n        }\n\n        .social-links {\n            display: flex;\n            gap: 12px;\n        }\n\n        .social-links a {\n            width: 36px;\n            height: 36px;\n            background: var(--bg-secondary);\n            border: 1px solid var(--border);\n            border-radius: 8px;\n            display: flex;\n            align-items: center;\n            justify-content: center;\n            color: var(--text-secondary);\n            transition: all 0.2s ease;\n        }\n\n        .social-links a:hover {\n            background: var(--primary);\n            color: white;\n            border-color: var(--primary);\n        }\n\n        /* Responsive */\n        @media (max-width: 768px) {\n            .hero h1 {\n                font-size: 38px;\n            }\n\n            .section-title {\n                font-size: 32px;\n            }\n\n            .features-grid,\n            .use-cases-grid,\n            .steps-grid {\n                grid-template-columns: 1fr;\n            }\n\n            .footer-content {\n                grid-template-columns: 1fr;\n                gap: 40px;\n            }\n\n            .footer-bottom {\n                flex-direction: column;\n                gap: 24px;\n            }\n\n            .nav-links {\n                display: none;\n            }\n\n            .container {\n                padding: 0 20px;\n            }\n        }\n    </style>\n</head>\n<body>\n    <!-- Header -->\n    <header id=\"header\">\n        <div class=\"container\">\n            <div class=\"header-content\">\n                <a href=\"#\" class=\"logo\">\n                    <div class=\"logo-icon\">\n                        <i class=\"fas fa-robot\"></i>\n                    </div>\n                    <span>Personal AI</span>\n                </a>\n                <nav class=\"nav-links\">\n                    <a href=\"#features\">기능</a>\n                    <a href=\"#uses\">활용</a>\n                    <a href=\"#how\">사용방법</a>\n                    <a href=\"#contact\" class=\"btn-header\">시작하기</a>\n                </nav>\n            </div>\n        </div>\n    </header>\n\n    <!-- Hero Section -->\n    <section class=\"hero\">\n        <div class=\"container\">\n            <div class=\"hero-content\">\n                <div class=\"hero-badge\">\n                    <i class=\"fas fa-sparkles\"></i>\n                    Google 계정 연동 AI 비서\n                </div>\n                <h1>\n                    업무를 자동화하는<br>\n                    <span class=\"highlight\">스마트 비서 솔루션</span>\n                </h1>\n                <p class=\"hero-description\">\n                    이메일, 일정, 문자 발송을 AI가 자동으로 처리합니다.<br>\n                    복잡한 설정 없이 바로 시작하세요.\n                </p>\n                <div class=\"cta-buttons\">\n                    <a href=\"#contact\" class=\"btn btn-primary\">\n                        <i class=\"fas fa-rocket\"></i>\n                        무료로 시작하기\n                    </a>\n                    <a href=\"#features\" class=\"btn btn-secondary\">\n                        <i class=\"fas fa-play-circle\"></i>\n                        자세히 알아보기\n                    </a>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Features Section -->\n    <section class=\"features\" id=\"features\">\n        <div class=\"container\">\n            <div class=\"section-header\">\n                <div class=\"section-badge\">FEATURES</div>\n                <h2 class=\"section-title\">AI가 처리하는 모든 업무</h2>\n                <p class=\"section-description\">\n                    자연스러운 대화만으로 복잡한 업무를 자동화하세요\n                </p>\n            </div>\n\n            <div class=\"features-grid\">\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\">\n                        📧\n                    </div>\n                    <h3>이메일 자동화</h3>\n                    <p>\n                        Gmail 계정과 연동하여 이메일 작성, 발송, 답장, 라벨 관리까지\n                        모든 이메일 업무를 자동으로 처리합니다.\n                    </p>\n                    <div class=\"feature-tags\">\n                        <span class=\"tag\">Gmail API</span>\n                        <span class=\"tag\">자동 답장</span>\n                        <span class=\"tag\">라벨 관리</span>\n                    </div>\n                </div>\n\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\">\n                        📅\n                    </div>\n                    <h3>일정 관리</h3>\n                    <p>\n                        Google Calendar와 연동하여 일정 조회, 생성, 수정을\n                        자연어로 명령하면 AI가 자동으로 실행합니다.\n                    </p>\n                    <div class=\"feature-tags\">\n                        <span class=\"tag\">Google Calendar</span>\n                        <span class=\"tag\">자동 일정</span>\n                        <span class=\"tag\">충돌 방지</span>\n                    </div>\n                </div>\n\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\">\n                        📱\n                    </div>\n                    <h3>문자 발송</h3>\n                    <p>\n                        SMS와 카카오톡 메시지를 자동으로 발송하고\n                        중요한 알림을 놓치지 않도록 관리합니다.\n                    </p>\n                    <div class=\"feature-tags\">\n                        <span class=\"tag\">Solapi</span>\n                        <span class=\"tag\">SMS</span>\n                        <span class=\"tag\">카카오톡</span>\n                    </div>\n                </div>\n\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\">\n                        👥\n                    </div>\n                    <h3>연락처 관리</h3>\n                    <p>\n                        Excel 기반 연락처 데이터베이스를 자동으로 조회하고\n                        업데이트하여 항상 최신 정보를 유지합니다.\n                    </p>\n                    <div class=\"feature-tags\">\n                        <span class=\"tag\">Microsoft Excel</span>\n                        <span class=\"tag\">자동 동기화</span>\n                        <span class=\"tag\">실시간 검색</span>\n                    </div>\n                </div>\n\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\">\n                        🤖\n                    </div>\n                    <h3>자연어 처리</h3>\n                    <p>\n                        Claude AI 기반 자연어 이해로 복잡한 명령어 없이\n                        평소 말하듯이 요청하면 정확히 실행합니다.\n                    </p>\n                    <div class=\"feature-tags\">\n                        <span class=\"tag\">Claude Sonnet</span>\n                        <span class=\"tag\">한국어</span>\n                        <span class=\"tag\">맥락 이해</span>\n                    </div>\n                </div>\n\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\">\n                        ⚡\n                    </div>\n                    <h3>워크플로우 자동화</h3>\n                    <p>\n                        n8n 기반 워크플로우로 여러 작업을 한 번에 처리하고\n                        반복 업무를 완전히 자동화합니다.\n                    </p>\n                    <div class=\"feature-tags\">\n                        <span class=\"tag\">n8n</span>\n                        <span class=\"tag\">멀티태스킹</span>\n                        <span class=\"tag\">MCP</span>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Use Cases -->\n    <section class=\"use-cases\" id=\"uses\">\n        <div class=\"container\">\n            <div class=\"section-header\">\n                <div class=\"section-badge\">USE CASES</div>\n                <h2 class=\"section-title\">누구에게 필요한가요?</h2>\n                <p class=\"section-description\">\n                    다양한 업무 환경에서 효율성을 극대화하세요\n                </p>\n            </div>\n\n            <div class=\"use-cases-grid\">\n                <div class=\"use-case-card\">\n                    <div class=\"use-case-icon\">💼</div>\n                    <h3>스타트업 대표</h3>\n                    <p>\n                        투자자 미팅, 직원 관리, 고객 응대까지\n                        모든 커뮤니케이션을 효율적으로\n                    </p>\n                </div>\n\n                <div class=\"use-case-card\">\n                    <div class=\"use-case-icon\">👨‍💻</div>\n                    <h3>프리랜서</h3>\n                    <p>\n                        클라이언트 일정 조율, 견적서 발송,\n                        프로젝트 관리를 자동화\n                    </p>\n                </div>\n\n                <div class=\"use-case-card\">\n                    <div class=\"use-case-icon\">🎯</div>\n                    <h3>영업/마케팅</h3>\n                    <p>\n                        고객 응대, 미팅 스케줄링,\n                        후속 조치를 자동으로 처리\n                    </p>\n                </div>\n\n                <div class=\"use-case-card\">\n                    <div class=\"use-case-icon\">🏪</div>\n                    <h3>소상공인</h3>\n                    <p>\n                        주문 확인, 예약 관리, 고객 문의\n                        답변을 AI가 대신\n                    </p>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- How it Works -->\n    <section class=\"how-it-works\" id=\"how\">\n        <div class=\"container\">\n            <div class=\"section-header\">\n                <div class=\"section-badge\">HOW IT WORKS</div>\n                <h2 class=\"section-title\">3단계로 시작하기</h2>\n                <p class=\"section-description\">\n                    복잡한 설정 없이 간단하게 시작할 수 있습니다\n                </p>\n            </div>\n\n            <div class=\"steps-grid\">\n                <div class=\"step-card\">\n                    <div class=\"step-number\">1</div>\n                    <h3>Google 계정 연동</h3>\n                    <p>\n                        Gmail, Google Calendar 계정을 연결하고\n                        필요한 권한을 승인합니다\n                    </p>\n                </div>\n\n                <div class=\"step-card\">\n                    <div class=\"step-number\">2</div>\n                    <h3>자연어로 요청</h3>\n                    <p>\n                        평소 말하듯이 원하는 작업을 AI에게\n                        자연스럽게 요청합니다\n                    </p>\n                </div>\n\n                <div class=\"step-card\">\n                    <div class=\"step-number\">3</div>\n                    <h3>자동 실행</h3>\n                    <p>\n                        AI가 요청을 분석하고 필요한 작업을\n                        자동으로 처리합니다\n                    </p>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Stats -->\n    <section class=\"stats\">\n        <div class=\"container\">\n            <div class=\"stats-grid\">\n                <div class=\"stat-item\">\n                    <div class=\"stat-number\">6+</div>\n                    <div class=\"stat-label\">통합 서비스</div>\n                </div>\n\n                <div class=\"stat-item\">\n                    <div class=\"stat-number\">24/7</div>\n                    <div class=\"stat-label\">실시간 처리</div>\n                </div>\n\n                <div class=\"stat-item\">\n                    <div class=\"stat-number\">99%</div>\n                    <div class=\"stat-label\">업무 자동화율</div>\n                </div>\n\n                <div class=\"stat-item\">\n                    <div class=\"stat-number\">즉시</div>\n                    <div class=\"stat-label\">응답 시간</div>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- CTA Section -->\n    <section class=\"cta-section\" id=\"contact\">\n        <div class=\"container\">\n            <div class=\"cta-card\">\n                <h2>지금 바로 시작하세요</h2>\n                <p>\n                    AI 비서와 함께 업무 효율을 극대화하고<br>\n                    더 중요한 일에 집중하세요\n                </p>\n                <a href=\"#\" class=\"btn\">\n                    <i class=\"fas fa-rocket\"></i>\n                    무료로 시작하기\n                </a>\n            </div>\n        </div>\n    </section>\n\n    <!-- Footer -->\n    <footer>\n        <div class=\"container\">\n            <div class=\"footer-content\">\n                <div class=\"footer-brand\">\n                    <div class=\"footer-logo\">\n                        <div class=\"footer-logo-icon\">\n                            <i class=\"fas fa-robot\"></i>\n                        </div>\n                        <span>Personal AI</span>\n                    </div>\n                    <p>\n                        Google 계정 기반 AI 비서 솔루션으로<br>\n                        업무 자동화를 경험하세요.\n                    </p>\n                </div>\n\n                <div class=\"footer-links\">\n                    <h4>제품</h4>\n                    <ul>\n                        <li><a href=\"#features\">기능</a></li>\n                        <li><a href=\"#uses\">활용사례</a></li>\n                        <li><a href=\"#\">가격</a></li>\n                        <li><a href=\"#\">문서</a></li>\n                    </ul>\n                </div>\n\n                <div class=\"footer-links\">\n                    <h4>지원</h4>\n                    <ul>\n                        <li><a href=\"#\">고객센터</a></li>\n                        <li><a href=\"#\">가이드</a></li>\n                        <li><a href=\"#\">API</a></li>\n                        <li><a href=\"#\">FAQ</a></li>\n                    </ul>\n                </div>\n\n                <div class=\"footer-links\">\n                    <h4>회사</h4>\n                    <ul>\n                        <li><a href=\"#\">소개</a></li>\n                        <li><a href=\"#\">블로그</a></li>\n                        <li><a href=\"#\">채용</a></li>\n                        <li><a href=\"#\">파트너십</a></li>\n                    </ul>\n                </div>\n            </div>\n\n            <div class=\"footer-bottom\">\n                <p>&copy; 2025 Personal AI Assistant. All rights reserved.</p>\n                <div class=\"social-links\">\n                    <a href=\"#\"><i class=\"fab fa-twitter\"></i></a>\n                    <a href=\"#\"><i class=\"fab fa-github\"></i></a>\n                    <a href=\"#\"><i class=\"fab fa-linkedin\"></i></a>\n                    <a href=\"#\"><i class=\"fab fa-youtube\"></i></a>\n                </div>\n            </div>\n        </div>\n    </footer>\n\n    <!-- n8n Chat Widget -->\n    <script src=\"https://cdn.jsdelivr.net/npm/n8n-widget-bot@latest/dist/n8n-widget-bot.min.js\"></script>\n    <script>\n        document.addEventListener('DOMContentLoaded', function() {\n            FloatingChatWidget.init({\n                themeColor: '#4f46e5',\n                title: 'AI 비서',\n                placeholder: '무엇을 도와드릴까요?',\n                welcomeMessage: '안녕하세요! 👋<br><br>저는 당신의 개인 AI 비서입니다.<br><br>📧 이메일 작성/발송<br>📅 일정 관리<br>📱 문자 발송<br>👥 연락처 관리<br><br>무엇을 도와드릴까요?',\n                position: 'bottom-right',\n                fontFamily: 'Pretendard, Inter, sans-serif',\n                resizable: true,\n                minWidth: 380,\n                maxWidth: 600,\n                minHeight: 550,\n                maxHeight: 800,\n                apiUrl: 'https://daniel8824.app.n8n.cloud/webhook/83178e75-3a70-450d-910b-3f3a1eedd8d0/chat'\n            });\n        });\n\n        // Header scroll effect\n        window.addEventListener('scroll', function() {\n            const header = document.getElementById('header');\n            if (window.scrollY > 50) {\n                header.classList.add('scrolled');\n            } else {\n                header.classList.remove('scrolled');\n            }\n        });\n\n        // Smooth scroll\n        document.querySelectorAll('a[href^=\"#\"]').forEach(anchor => {\n            anchor.addEventListener('click', function (e) {\n                e.preventDefault();\n                const target = document.querySelector(this.getAttribute('href'));\n                if (target) {\n                    const headerHeight = 72;\n                    const targetPosition = target.offsetTop - headerHeight;\n                    window.scrollTo({\n                        top: targetPosition,\n                        behavior: 'smooth'\n                    });\n                }\n            });\n        });\n    </script>\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1104,
+        -112
+      ],
+      "id": "c5218b82-9d76-4bae-b3d5-892657024f00",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1uMNcJWCN4CEF5_g5KqrgqlRhiLutk18Ousb9I8RgKJs",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uMNcJWCN4CEF5_g5KqrgqlRhiLutk18Ousb9I8RgKJs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uMNcJWCN4CEF5_g5KqrgqlRhiLutk18Ousb9I8RgKJs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('name__using_to_match_', `업데이트를 위해 매핑할 이름값`, 'string') }}",
+            "phone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('phone', `연락처 대상자 휴대폰 번호`, 'string') }}",
+            "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', `연락처 대상자 이메일 주소`, 'string') }}",
+            "department": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('department', `연락처 대상자 소속 부서`, 'string') }}",
+            "task_completion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('task_completion', `연락처 대상자 작업 완료 여부`, 'string') }}",
+            "start_date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('start_date', `연락처 대상자 입사 날짜`, 'string') }}"
+          },
+          "matchingColumns": [
+            "name"
+          ],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "department",
+              "displayName": "department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "start_date",
+              "displayName": "start_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "task_completion",
+              "displayName": "task_completion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        752,
+        496
+      ],
+      "id": "87ec6361-5a44-4a21-a22b-0f239e721d2e",
+      "name": "Update Contact",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1uMNcJWCN4CEF5_g5KqrgqlRhiLutk18Ousb9I8RgKJs",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uMNcJWCN4CEF5_g5KqrgqlRhiLutk18Ousb9I8RgKJs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uMNcJWCN4CEF5_g5KqrgqlRhiLutk18Ousb9I8RgKJs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('name', `연락처 대상자 이름`, 'string') }}",
+            "phone": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('phone', `연락처 대상자 휴대폰 번호`, 'string') }}",
+            "email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('email', `연락처 대상자 이메일 주소`, 'string') }}",
+            "department": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('department', `연락처 대상자 소속 부서`, 'string') }}",
+            "task_completion": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('task_completion', `연락처 대상자 작업 완료 여부`, 'string') }}",
+            "start_date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('start_date', `연락처 대상자 입사 날짜`, 'string') }}"
+          },
+          "matchingColumns": [
+            "name"
+          ],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "department",
+              "displayName": "department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "start_date",
+              "displayName": "start_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "task_completion",
+              "displayName": "task_completion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        496
+      ],
+      "id": "c60d3d85-094f-4367-a8b3-645639c25412",
+      "name": "Append Contact",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1uMNcJWCN4CEF5_g5KqrgqlRhiLutk18Ousb9I8RgKJs",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uMNcJWCN4CEF5_g5KqrgqlRhiLutk18Ousb9I8RgKJs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1uMNcJWCN4CEF5_g5KqrgqlRhiLutk18Ousb9I8RgKJs/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "specifyRangeA1",
+              "range": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Range', `조회할 셀 범위 지정`, 'string') }}"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        496
+      ],
+      "id": "1c3165dd-ee8d-4715-b0c9-51892a6ede3f",
+      "name": "Read Contacts1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "KKndhIOqMyfVMSRi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "excel"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        1744,
+        304
+      ],
+      "id": "d702547e-2ef3-49fd-87b4-c54a36aafa86",
+      "name": "Excel MCP Server",
+      "webhookId": "94add959-32c8-4143-b430-42c42a8c5dbd",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "contacts"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        640,
+        304
+      ],
+      "id": "fb7e5364-caf8-47aa-9854-3fa91201f6a1",
+      "name": "Contacts MCP Server",
+      "webhookId": "94add959-32c8-4143-b430-42c42a8c5dbd",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "apiKey",
+        "operation": "sendKakaoCTA",
+        "to": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', `수신자 휴대폰 번호`, 'string') }}",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Text', `SMS 내용`, 'string') }}",
+        "channelId": "KA01PF251208091350483Ia5bPS3PtZX",
+        "fromForKakao": "01032018824",
+        "buttonsJson": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Buttons__JSON_Array_', `버튼 목록 (JSON Array). 웹링크만 지원.\n형식: [{\"buttonName\":\"버튼명\",\"buttonType\":\"WL\",\"linkMo\":\"https://...\"}]\n전화: {\"buttonName\":\"전화\",\"buttonType\":\"WL\",\"linkMo\":\"tel:01012345678\"}\n버튼 없음: []\n최대 5개, 버튼명 14자 이내`, 'string') }}"
+      },
+      "type": "n8n-nodes-solapi.solapiTool",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        496
+      ],
+      "id": "e091da0d-f475-44a4-b2fc-96c3f63f197a",
+      "name": "Solapi Friends",
+      "credentials": {
+        "solapiApiKeyApi": {
+          "id": "P677HmMeytcV4v0W",
+          "name": "Solapi Key account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date Time": {
+      "ai_tool": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Label": {
+      "ai_tool": [
+        [
+          {
+            "node": "Label MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Label Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Global AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Remove Label": {
+      "ai_tool": [
+        [
+          {
+            "node": "Label MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Excel MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Excel MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Excel MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contacts Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Event Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Event MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Event MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Event MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "View Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Event MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Event MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Event MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SMS Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "Global AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solapi SMS": {
+      "ai_tool": [
+        [
+          {
+            "node": "SMS MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "Contacts MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "Contacts MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Contacts1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Contacts MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solapi Friends": {
+      "ai_tool": [
+        [
+          {
+            "node": "SMS MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "versionId": "e23058e2-586f-4d49-a9c8-68b2aea89aa6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed29603280f689e433d162d6eb2f4c0ef594feb614602d9f72d06ccb3a8d3e19"
+  },
+  "id": "g3SeiJlDgDIHilTd",
+  "tags": [
+    {
+      "updatedAt": "2025-12-04T00:10:44.728Z",
+      "createdAt": "2025-12-04T00:10:44.728Z",
+      "id": "UgPWglPCWDdY6AAv",
+      "name": "에이전트 클래스"
+    }
+  ]
+}
