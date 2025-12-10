@@ -1,0 +1,583 @@
+{
+  "name": "Financial MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "yahoo"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        -144
+      ],
+      "id": "8b9d07b2-0567-4977-8f59-1f8f8c27e7ed",
+      "name": "Yahoo MCP Server",
+      "webhookId": "e773aa42-337b-481a-8529-1a8b45daf1f6",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "RSS Link를 입력해서 웹문서를 스크랩하는 도구입니다",
+        "method": "POST",
+        "url": "https://api.firecrawl.dev/v2/scrape",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `크롤링할 웹 링크`, 'string') }}"
+            },
+            {
+              "name": "format",
+              "value": "markdown"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        960,
+        64
+      ],
+      "id": "cd6defe0-760c-4f66-a7bd-1d3f77a8d452",
+      "name": "Get RSS",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "xJGj71e4KXVhuHnq",
+          "name": "Firecrawl Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=# 1. 분석 & 견해\n\n## 시장 개황 : https://kr.investing.com/rss/market_overview.rss\n- 기술 분석 : https://kr.investing.com/rss/market_overview_Technical.rss\n- 기본 분석 : https://kr.investing.com/rss/market_overview_Fundamental.rss\n- 의견 : https://kr.investing.com/rss/market_overview_Opinion.rss\n- 투자 아이디어 : https://kr.investing.com/rss/market_overview_investing_ideas.rss\n\n## 암호화폐 의견과 분석 : https://kr.investing.com/rss/302.rss\n\n## 가장 인기 있는 분석 : https://kr.investing.com/rss/286.rss\n\n## 편집자 선정 : https://kr.investing.com/rss/290.rss\n\n## 주식 시장 분석 & 견해 : https://kr.investing.com/rss/stock.rss\n- 기술 분석 : https://kr.investing.com/rss/stock_Technical.rss\n- 기본 분석 : https://kr.investing.com/rss/stock_Fundamental.rss\n- 의견 : https://kr.investing.com/rss/stock_Opinion.rss\n- 주식 선택 : https://kr.investing.com/rss/stock_stock_picks.rss\n- 주식 분석 : https://kr.investing.com/rss/stock_Stocks.rss\n- 지수 분석 : https://kr.investing.com/rss/stock_Indices.rss\n- 선물 : https://kr.investing.com/rss/stock_Futures.rss\n- 옵션 분석 : https://kr.investing.com/rss/stock_Options.rss\n\n# 2. 뉴스\n\n- 모든 뉴스 : https://kr.investing.com/rss/news.rss\n- 애널리스트 투자의견 : https://kr.investing.com/rss/news_1061.rss\n- 실적 보고서와 발표 예정일 : https://kr.investing.com/rss/news_1062.rss\n- 어닝콜 스크립트 : https://kr.investing.com/rss/news_1063.rss\n- SEC 공시 : https://kr.investing.com/rss/news_1064.rss\n- 주식 시장 투자 아이디어 : https://kr.investing.com/rss/news_1065.rss\n- 암호화폐 뉴스 : https://kr.investing.com/rss/news_301.rss\n- 내부자 거래 뉴스 : https://kr.investing.com/rss/news_357.rss\n- IPO 뉴스 : https://kr.investing.com/rss/news_450.rss\n- 뉴스 속보 헤드라인 : https://kr.investing.com/rss/news_462.rss\n- 외환 뉴스 : https://kr.investing.com/rss/news_1.rss\n- 많이 본 기사 : https://kr.investing.com/rss/news_285.rss\n- 최신 금융 뉴스 : https://kr.investing.com/rss/news_477.rss\n- 상품과 선물 뉴스 : https://kr.investing.com/rss/news_11.rss\n- 주식 시장 뉴스 : https://kr.investing.com/rss/news_25.rss\n- 경제 지표 뉴스 : https://kr.investing.com/rss/news_95.rss\n- 경제 뉴스 : https://kr.investing.com/rss/news_14.rss",
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', `RSS Link`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        64
+      ],
+      "id": "9e4ba259-d8f8-4a6b-b5ad-a7784f27c008",
+      "name": "Read RSS"
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "Investing"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        752,
+        -144
+      ],
+      "id": "ee6e4ddb-7426-40ff-8960-6c3f3d2aa380",
+      "name": "Investing MCP Server",
+      "webhookId": "e773aa42-337b-481a-8529-1a8b45daf1f6",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "전달하는 symbol에 해당하는 종목을 studies에 나열된 분석차트 이미지로 생성하여 해당 차트를 이미지 인식 기반으로 분석을 요청하는 도구입니다.",
+        "url": "https://api.chart-img.com/v1/tradingview/advanced-chart/storage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "interval",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `set tradingview chart interval* [1m, 3m, 5m, 15m, 30m, 45m, 1h, 2h, 3h, 4h, 1D, 1W, 1M, 3M, 6M, 1Y] exchange dependent`, 'string') }}"
+            },
+            {
+              "name": "symbol",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `set tradingview symbol (e.g. NASDAQ:AAPL)`, 'string') }}"
+            },
+            {
+              "name": "studies",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `여러개 요청시 comma로 구분합니다. (e.g. MACD,SSI)`, 'string') }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        1152,
+        64
+      ],
+      "id": "1327a47d-defc-4fd4-880e-ea3c8462afbf",
+      "name": "Get Chart",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "FhVcF7UVio3ZFjfv",
+          "name": "Chart IMG Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "text": "=1. 페르소나\n당신은 뉴욕증권거래소(NYSE)와 런던증권거래소(LSE)에서 50년 이상 근무한 전문 재무 분석가입니다. 수십 년에 걸쳐 수많은 시장 사이클, 강세장, 약세장, 그리고 경제 변화를 직접 겪으며 분석해 온 당신의 주식 차트 기술적 분석 전문성은 타의 추종을 불허합니다.\n\n2. 핵심 역할\n당신의 역할은 제공된 재무 차트 이미지를 정밀하게 분석하고, 기술적 측면에 대한 포괄적인 통찰력을 제공하는 것입니다. 분석에는 캔들스틱 패턴, MACD 지표, 거래량 추세, 그리고 전반적인 시장 심리가 반드시 포함되어야 합니다. 차트에 대한 상세한 분석을 제공하고, 주요 관심 영역과 당신의 풍부한 시장 경험에서 비롯된 실행 가능한 통찰력을 명확히 제시해야 합니다.",
+        "imageUrls": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL_s_', `Get Chart에서 생성된 이미지 링크`, 'string') }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGeminiTool",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        64
+      ],
+      "id": "28bbdb47-159c-4b32-ac84-041ad1f93a63",
+      "name": "Analyze Chart",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ePPwdI0uT0G0C906",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "chart"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        -144
+      ],
+      "id": "f8345cb7-9451-44af-9a2a-03b1b40c4f33",
+      "name": "Chart MCP Server",
+      "webhookId": "e773aa42-337b-481a-8529-1a8b45daf1f6",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "특정 회사에 대한 손익계산서 데이터가 필요할때 Yahoo Finance에서 손익계산서 데이터를 수집합니다.",
+        "method": "POST",
+        "url": "https://api.tavily.com/extract",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"urls\": \"{{$fromAI('url','https://finance.yahoo.com/quote/{ticker}/financials/')}}\",\n  \"include_images\": false,\n  \"extract_depth\": \"basic\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        112,
+        64
+      ],
+      "id": "40ec8099-291e-4016-84dc-fd3be8855c71",
+      "name": "Get Income",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PRjiOUMMp9jAWe54",
+          "name": "Header Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "특정 회사에 대한 재무제표 데이터가 필요할때 Yahoo Finance에서 재무제표 데이터를 수집합니다.",
+        "method": "POST",
+        "url": "https://api.tavily.com/extract",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"urls\": \"{{$fromAI('url','https://finance.yahoo.com/quote/{ticker}/balance-sheet/')}}\",\n  \"include_images\": false,\n  \"extract_depth\": \"basic\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        272,
+        64
+      ],
+      "id": "b1d00de2-4d10-436f-8fd6-af93506c0404",
+      "name": "Get Sheet",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PRjiOUMMp9jAWe54",
+          "name": "Header Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "특정 회사에 대한 현금흐름표 데이터가 필요할때 Yahoo Finance에서 현금흐름표 데이터를 수집합니다.",
+        "method": "POST",
+        "url": "https://api.tavily.com/extract",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"urls\": \"{{$fromAI('url','https://finance.yahoo.com/quote/{ticker}/cash-flow/')}}\",\n  \"include_images\": false,\n  \"extract_depth\": \"basic\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        432,
+        64
+      ],
+      "id": "476541f8-9347-4d24-ae57-82ece95dcf36",
+      "name": "Get Cash",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PRjiOUMMp9jAWe54",
+          "name": "Header Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "인터넷을 활용해 특정 회사에 대한 추가 리서치가 필요할 때 사용하며, 필요한 정보를 수집한다.",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $fromAI('query','search term') }}\",\n  \"topic\": \"{{ $fromAI('topic','The category of search. The value should be either general or news') }}\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": month,\n  \"days\": 7,\n  \"include_answer\": false,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [\"finance.yahoo.com\"],\n  \"exclude_domains\": []\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -208,
+        64
+      ],
+      "id": "8ad7dd5f-efcd-40e1-ba07-6fed39009f0f",
+      "name": "Internet Search",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PRjiOUMMp9jAWe54",
+          "name": "Header Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "특정 회사에 대한 주가 데이터가 필요할 때, Yahoo Finance에서 특정 회사의 주가 히스토리 데이터를 수집합니다.",
+        "method": "POST",
+        "url": "https://api.tavily.com/extract",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n \"urls\": \"{{$fromAI('url','https://finance.yahoo.com/quote/{ticker}/history/')}}\",\n  \"include_images\": false,\n  \"extract_depth\": \"basic\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        -48,
+        64
+      ],
+      "id": "9ec17ccb-2cca-498b-9c8f-705a4515bf43",
+      "name": "Get Price",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PRjiOUMMp9jAWe54",
+          "name": "Header Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "bearerAuth",
+        "path": "vantage"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        416,
+        -144
+      ],
+      "id": "469e69ef-5036-4e87-8ee5-ac239470fa75",
+      "name": "Alpha Vantage MCP Server",
+      "webhookId": "e773aa42-337b-481a-8529-1a8b45daf1f6",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://mcp.alphavantage.co/mcp",
+        "authentication": "headerAuth",
+        "include": "except",
+        "excludeTools": [
+          "RSI"
+        ],
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        64
+      ],
+      "id": "a32ef779-2b12-468b-810c-8dcc3766b5fb",
+      "name": "Alpha Vantage",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "362QCAXOCca6Ki8O",
+          "name": "Header Alpha Vantage account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-pro-image-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-pro-image-preview (Nano Banana Pro)"
+        },
+        "prompt": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt', `분석 내용에 대한 인포그래픽 이미지 생성`, 'string') }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGeminiTool",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        64
+      ],
+      "id": "de876020-3158-429b-8ca4-3b834291d373",
+      "name": "Generate Chart",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ePPwdI0uT0G0C906",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get RSS": {
+      "ai_tool": [
+        [
+          {
+            "node": "Investing MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read RSS": {
+      "ai_tool": [
+        [
+          {
+            "node": "Investing MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chart": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chart MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Chart": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chart MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Income": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yahoo MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sheet": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yahoo MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Cash": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yahoo MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Internet Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yahoo MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Price": {
+      "ai_tool": [
+        [
+          {
+            "node": "Yahoo MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alpha Vantage": {
+      "ai_tool": [
+        [
+          {
+            "node": "Alpha Vantage MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Chart": {
+      "ai_tool": [
+        [
+          {
+            "node": "Chart MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fc9460f2-f436-452f-8106-24806e578b21",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed29603280f689e433d162d6eb2f4c0ef594feb614602d9f72d06ccb3a8d3e19"
+  },
+  "id": "EJqBC28DIlOI1Lg2",
+  "tags": []
+}

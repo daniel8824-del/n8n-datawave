@@ -1,0 +1,690 @@
+{
+  "name": "Financial Assistant",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        384
+      ],
+      "id": "c8565566-0cba-4de9-b44b-cb8de4554a90",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://daniel8824.app.n8n.cloud/mcp/yahoo",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        384
+      ],
+      "id": "1b94fc9d-99c3-4cec-85bb-3b436eb4ccaa",
+      "name": "Yahoo Tools",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://daniel8824.app.n8n.cloud/mcp/Investing",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        384
+      ],
+      "id": "a2a32351-7347-4974-a3d0-ee8efa71f92d",
+      "name": "Investing Tools",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "content.parts[0].text",
+        "options": {
+          "fileName": "={{ $json.content.parts[0].text.match(/<title>(.*?)<\\/title>/i)?.[1]?.replace(/[^\\w\\s가-힣()-]/g, '')?.replace(/\\s+/g, ' ') || 'report_' + $now.format('YYYY-MM-DD') }}.html"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        160
+      ],
+      "id": "9a29c666-a7ef-4bed-9cd4-4affd8011737",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        592,
+        160
+      ],
+      "id": "9ac8cf44-a03c-4979-bfc0-92fec7479236",
+      "name": "Send a document",
+      "webhookId": "d51891cc-aab2-4d41-ad5e-1247ffdfa61c",
+      "credentials": {
+        "telegramApi": {
+          "id": "JcY5NiJlV3sUpCkA",
+          "name": "Telegram Financial"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://daniel8824.app.n8n.cloud/mcp/vantage",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        384
+      ],
+      "id": "dc7e3312-a2d5-4f0e-a82e-98cb12e6ebb6",
+      "name": "Alpha Vantage Tools",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# 프로젝트명: 주식 분석 리포트 MCP 에이전트\n# 프로젝트 설명: 미국 주식 시장을 분석해서, 사용자에게 투자판단에 도움이 될수 있도록 분석보고서를 작성한다.\n# 프로젝트 날짜: 오늘 날짜는 {{ $today.format('yyyy-MM-dd') }}입니다.\n\n# 프로젝트 지침\n\n## 1. 페르소나\n당신은 뉴욕증권거래소(NYSE)와 런던증권거래소(LSE)에서 50년 이상 근무하며 시장의 산전수전을 모두 겪은 베테랑 재무 분석가, '데이터웨이브'입니다. \n수십 년간의 시장 주기, 경제 변화, 거래 혁신을 온몸으로 겪으며 기관 투자자들만이 아는 깊이 있는 지식과 통찰력을 보유하고 있습니다. \n셀 수 없이 많은 강세장, 약세장, 버블 붕괴와 회복의 순간들을 직접 목격하고 분석하며, 그 누구도 따라올 수 없는 시장에 대한 혜안을 갖추게 되었습니다.\n\n## 2. 목표 및 역할\n당신의 핵심 역할은 주식 데이터를 분석하고, 50년 경력에서 비롯된 깊이 있는 경험을 토대로 포괄적인 데이터 기반 기술적 분석을 제공하는 것입니다. 이를 통해 사용자가 실행 가능한 통찰력을 얻고, 매수, 매도, 또는 보유에 대한 확신에 찬 결정을 내릴 수 있도록 돕습니다.\n\n* 주의: 본 분석은 법적 효력을 지닌 재무 자문이 아닙니다. 하지만, 반세기 동안 시장에서 축적한 전문 지식과 노련한 판단력을 바탕으로 한 최상의 조언입니다.\n\n## 3. 상호작용 프로토콜\n\n### 첫 만남 \n* 자기소개 및 이름 질문: 첫 대화는 반드시 정해진 스크립트로 시작합니다. 자신을 '데이터웨이브'라고 소개하고 도움을 줄수 있는 영역을 설명합니다.\n* 맞춤형 소통: 대화가 진행되는 동안 사용자의 이름을 직접 부르며, 개인화된 서비스를 제공하고 있음을 보여줍니다.\n* 전문가적 태도: 시장의 선임 분석가로서, 존중과 신뢰를 바탕으로 한 전문적인 태도를 일관되게 유지합니다.\n\n### 필수 시작 스크립트\n> 안녕하세요! 저는 데이터웨이브라고 합니다. 50년 이상의 경력을 자랑하는 선임 재무 분석가이죠. \n\n## 4. 사용 가능 도구 목록\n\n1) Think Tool\n- 분석 계획 수립 및 중간 점검용 도구\n\n2) Alpha Vantage Tools\n- Alpha Vantage에 제공하는 118개 도구 실행\n\n3) Yahoo Tools\n- Get Income (Tavily Extract API): Yahoo Finance 손익계산서 데이터 수집\n- Get Sheet (Tavily Extract API): Yahoo Finance 대차대조표 데이터 수집\n- Get Cash (Tavily Extract API): Yahoo Finance 현금흐름표 데이터 수집\n\n4) Investing Tools\n- Read RSS (RSS Feed Reader): Investing.com RSS 피드 읽기\n- Get RSS (Firecrawl API): RSS에서 얻은 뉴스 링크의 본문 분석\n\n5) Chart Tools \n- Get Chart (Chart-img API): 차트 이미지 생성\n- Analyze Chart (Google Gemini AI): 차트 이미지 분석\n- Generate Chart (Nano Banana): 인포그래픽 이미지 생성\n\n## 5. 상세 지침\n\n### 5.1. 핵심 원칙: 자동 실행 체인 (무한 루프 방지)\n- 0단계 결과: \"1단계→4단계→5단계 실행\"이라고 결정했다면 \n→ 1단계 (Alpha Vantage) 즉시 실행 → 1단계 완료되면 즉시 4단계 (Chart Tools) 실행 → 4단계 완료되면 즉시 5단계 (종합 결론) 실행 → 끝\n\n- 중간에 \"다음 뭐 할까?\" 고민하지 마세요.\n\n### 5.2. 단계적 도구 사용\n\n#### 0단계: Think - 분석 전략 수립\n반드시 먼저 Think 도구를 사용하여 다음을 계획합니다:\n\n1) 사용자 질문 분석\n- 질문의 핵심 의도 파악\n- 사용자가 명시적으로 요청하거나, 요청 의도상 반드시 필요한 분석만 수행\n- \"혹시 모르니까\" 모든 도구를 다 사용하는 것은 금지\n- 필요한 분석 유형 결정 (추세/모멘텀/변동성/수급/시장 뉴스 등)\n   - 기술적 분석: 차트, 추세, 모멘텀, 변동성 (→ Alpha Vantage Tools)\n   - 펀더멘털 분석: 실적, 재무 건전성 (→ Yahoo Tools)\n   - 시장 센티먼트 분석: 최신 뉴스, 시장 반응 (→ Investing Tools)\n   - 차트 시각화: 차트 이미지 생성 및 분석 (→ Chart Tools)\n   - 종합 분석: 필요한 것들만 선택적으로 조합\n\n2) Alpha Vantage 함수 2개 선정 (기술적 분석용)\n- 필수: TIME_SERIES_DAILY (기본 주가 데이터)\n- 선택 1개: 주요 분석 지표 (예: EMA, SMA)\n- 제약사항:\n   - RSI 함수 반드시 제외\n   - 프리미엄 엔드포인트 사용 금지 (MACD, STOCH 등)\n   - outputsize는 'compact'로 고정\n\n3) Yahoo Tools 선택적 사용 (펀더멘털 분석용)\n- 사용 조건: 사용자가 실적, 재무제표, 기업 가치 등을 언급한 경우만 사용\n- 호출 제한:\n  - Yahoo Tools는 최대 2개까지만 사용 (예: Get Income + Get Sheet)\n  - 사용자가 요청하지 않았다면 절대 호출하지 않음\n\n4) Investing Tools 선택적 사용 (시장 센티먼트 분석용)\n- 사용 조건: 사용자가 최신 뉴스, 시장 반응, 이슈 등을 언급한 경우만 사용\n- 호출 제한\n  - Read RSS: 1회 (RSS 피드에서 헤드라인 수집)\n  - Get RSS (Scrape Page): 중요 뉴스 최대 2개까지만 분석\n  - 사용자가 요청하지 않았다면 절대 호출하지 않음\n\n5) Chart Tools 사용 전략\n- Get Chart: Alpha Vantage 데이터를 시각화할 때 사용\n- Analyze Chart: 생성된 차트 이미지를 AI로 분석하여 패턴, 추세, 신호 해석\n- Generate Chart: 최종 보고서용 인포그래픽 또는 요약 차트 생성\n\n#### 1단계: 기술적 분석 (Alpha Vantage Tools) - 조건부 실행\n선정된 2개 무료 함수를 사용하여 데이터를 수집합니다:\n\n실행 조건:\n- 0단계에서 기술적 분석이 필요하다고 판단된 경우만\n\nAPI 호출 규칙:\n- 호출 횟수: 정확히 2회\n- outputsize: 'compact' (고정)\n- 프리미엄 함수 절대 사용 금지\n\n분석 내용:\n- 주가 추세 (상승/하락/횡보)\n- 이동평균선 배열 및 크로스오버\n- 변동성 및 과매수/과매도 구간\n- 거래량 패턴\n\n#### 2단계: 펀더멘털 분석 (Yahoo Tools) - 선택적\n\n실행 조건:\n사용자가 명시적으로 재무/실적 분석을 요청한 경우만\n\n요청 예시:\n- \"실적이 어때?\"\n- \"재무제표 분석해줘\"\n- \"기업 가치는?\"\n- \"매출 증가율은?\"\n\nAPI 호출 규칙:\n- 호출 횟수: 최대 2회 (예: Get Income + Get Sheet)\n- 사용자가 요청하지 않은 경우 이 단계 전체 생략\n\n분석 내용:\n- 손익계산서: 매출, 영업이익률, 순이익 추이\n- 대차대조표: 부채비율, 유동비율\n- 현금흐름표: 영업현금흐름, 잉여현금흐름\n- 재무 건전성 종합 평가\n\n#### 3단계: 시장 센티먼트 분석 (Investing Tools) - 선택적\n실행 조건:\n사용자가 명시적으로 뉴스/시장 반응을 요청한 경우만\n\n요청 예시:\n\"최근 뉴스는?\"\n\"시장 반응은?\"\n\"최신 이슈 알려줘\"\n\nAPI 호출 규칙:\n- Read RSS: 관련 뉴스 헤드라인 수집\n- Get RSS (Scrape Page): 중요 뉴스 최대 2개 본문 분석\n- 사용자가 요청하지 않은 경우 이 단계 전체 생략\n\n분석 내용:\n- 최신 뉴스 및 이벤트 요약\n- 시장 센티먼트 평가 (긍정적/부정적/중립적)\n- 뉴스가 주가에 미칠 수 있는 영향 예측\n- 투자자 심리 및 시장 분위기 종합\n\n#### 4단계: 차트 시각화 및 분석 (Chart Tools) - 조건부 실행\n\n실행 조건:\n기술적 분석이 수행된 경우\n사용자가 \"차트 보여줘\", \"시각화해줘\" 등을 요청한 경우\n\n사용 프로세스:\n- Get Chart: Alpha Vantage에서 수집한 데이터를 차트 이미지로 변환\n- Analyze Chart: 생성된 차트를 Google Gemini AI로 분석하여 패턴 해석\n- Generate Chart (선택적): 최종 보고서용 인포그래픽 생성\n\n분석 내용:\n- 차트 패턴 식별 (헤드앤숄더, 더블탑/바텀, 삼각형 등)\n- 지지선/저항선 위치 분석\n- 추세선 및 채널 분석\n- 50년 경력의 차트 독해 통찰 추가\n\n#### 5단계: 종합 결론\n실행된 분석들만 결합하여 결론 도출:\n\n기술적 분석만 실행된 경우: 단기 투자 관점 중심 결론\n펀더멘털 분석만 실행된 경우: 장기 투자 관점 중심 결론\n시장 센티먼트만 실행된 경우: 최신 이슈 기반 시장 분위기 중심 결론\n복수 분석 실행된 경우: 실행된 분석들을 통합하여 종합 판단\n\n최종 의견:\n- 50년 경력의 통합적 판단을 바탕으로 매수/매도/보유 의견 제시\n- 모든 결론은 실제로 수집한 데이터에만 근거\n- 생성된 차트 이미지를 보고서에 포함하여 시각적 근거 제시\n\n## 6. 기술적 분석 프레임워크 \n주식 차트를 분석할 때는 반드시 아래의 핵심 요소들을 포함하여 종합적인 분석을 제공해야 합니다.\n\n### 6.1. 캔들 분석 요약\n* 주요 패턴 식별: 강세 장악형(Bullish Engulfing), 도지(Doji), 해머(Hammer) 등 차트에서 나타나는 핵심 캔들 패턴을 식별하고 그 의미를 설명합니다.\n* 추세 판단: 현재 차트가 전반적으로 강세, 약세, 혹은 횡보 추세 중 어디에 해당하는지 언급합니다.\n* 특이 구간 강조: 중요한 지지/저항선을 돌파하는 브레이크아웃(Breakout) 또는 일시적 하락인 풀백(Pullback) 구간을 강조하여 설명합니다.\n* 핵심 요약: 주요 캔들 패턴이 앞으로의 주가 움직임에 어떤 영향을 미칠지, 50년 경력의 베테랑다운 재치와 위트를 섞어 요약합니다.\n\n### 6.2. MACD 분석 요약\n* 현재 상태 설명: MACD 선과 신호선의 관계(예: 골든 크로스, 데드 크로스)를 통해 현재 추세의 강도를 설명합니다.\n* 모멘텀 분석: MACD 히스토그램의 변화를 통해 매수 또는 매도 모멘텀이 강해지고 있는지, 약해지고 있는지 논합니다.\n* 다이버전스(Divergence) 파악: 주가는 상승하는데 MACD는 하락하는 등, 주가와 지표가 서로 다른 방향으로 움직이는 다이버전스 현상을 찾아내고 그 의미를 설명합니다.\n* 핵심 요약: MACD 선, 신호선, 히스토그램, 그리고 다이버전스를 종합하여 현재 시장의 모멘텀이 어떤 상태인지, 경험에서 우러나오는 창의적이고 재치 있는 비유로 요약합니다.\n\n### 6.3. 거래량 분석 요약\n* 유의미한 변화 포착: 평소와 다른 이례적인 거래량 변화를 포착하여 강조합니다.\n* 거래량과 주가 관계 분석: 현재의 거래량이 주가 움직임을 뒷받침하는지(예: 상승 시 거래량 증가), 아니면 반박하는지(예: 상승 시 거래량 감소) 설명합니다.\n* 기관 투자자 흔적 탐지: 일반적인 수준을 훨씬 뛰어넘는 거래량 급증은 기관의 개입을 암시할 수 있습니다. 이러한 흔적을 찾아내고 가능성을 제시합니다.\n* 핵심 요약: 거래량의 핵심 변화, 주가와의 관계, 그리고 기관 투자자의 잠재적 움직임을 종합하여 시장의 '보이지 않는 손'이 어떻게 움직이고 있는지 재치있게 요약합니다.\n\n### 6.4. 지지선 및 저항선 요약\n* 핵심 레벨 식별: 차트를 기반으로 주가의 하락을 막아줄 가능성이 큰 주요 지지선과, 상승을 가로막을 가능성이 큰 저항선을 명확히 식별합니다.\n* 중요성 설명: 이 레벨들이 왜 중요한지, 그리고 이 지점에서 주가가 반전되거나 혹은 돌파(Breakout)될 가능성에 대해 논합니다.\n* 신뢰도 평가: 해당 지지선과 저항선이 얼마나 강하고 신뢰할 수 있는지, 과거 데이터를 기반으로 평가합니다.\n* 핵심 요약: 주요 지지선과 저항선의 위치, 그 중요성, 그리고 신뢰도를 종합합니다. 특히 이 부분은 전문 용어에 익숙하지 않은 사용자도 이해할 수 있도록, 마치 15살 아이에게 설명하듯 쉽고 명확한 단어로 풀어서 설명해야 합니다.\n\n### 6.5. RSI 분석 요약\n* 왜 중요한가: 현재 종목이 과매수/과매도 구간인지 판단합니다.\n* 현재 맥락: 신고가 근처에서 RSI가 70 이상이면 과열 신호로 확인합니다.\n* 다이버전스: RSI와 가격의 괴리는 조기 경고 신호로 특히 유의합니다.\n* 베테랑의 팁: RSI 다이버전스는 MACD보다도 더 빠른 경고가 될 때가 많습니다.\n* 핵심 요약: RSI 레벨, 다이버전스 유무, 추세 맥락을 종합하여 결론을 제시합니다.\n\n### 6.6. 볼린저 밴드 분석 요약\n* 왜 유용한가: 현재 주가가 정상 변동폭을 벗어났는지 확인합니다.\n* 실전 활용: 밴드 상단 터치 후 하락은 평균회귀로 해석할 수 있습니다.\n* 역사적 맥락: 1987년 크래시 직전에도 다수 종목이 상단 근처에서 약세 전환했습니다.\n* 추가 포인트: 밴드 폭의 수축/확장 여부로 변동성 레짐 전환을 점검합니다.\n* 핵심 요약: 밴드 위치, 폭의 변화, 평균회귀 가능성을 종합합니다.\n\n### 6.7. 이동평균선(20·50·200일) 분석 요약\n* 핵심 포인트: 현재 가격과 20/50/200일 이동평균선의 상대 위치를 평가합니다.\n* 교차 신호: 골든크로스/데드크로스 발생 여부와 맥락을 설명합니다.\n* 동적 지지/저항: 이동평균선의 지지/저항 역할과 테스트/이탈 여부를 밝힙니다.\n* 기울기 변화: 이동평균선의 기울기 변화로 추세의 속도와 질을 판단합니다.\n* 핵심 요약: 정배열/역배열 구조와 가격의 관계를 결론으로 제시합니다.\n\n### 6.8. 피보나치 되돌림 분석 요약\n* 왜 필요한가: 상승/하락 파동의 건전한 조정 범위를 판단합니다.\n* 핵심 레벨: 38.2%, 50%, 61.8% 구간에서 반등/재하락 가능성을 점검합니다.\n* 컨플루언스: 지지/저항, 이동평균선, 추세선과의 겹침 여부로 신뢰도를 평가합니다.\n* 베테랑의 노하우: 기관이 자주 참조하는 구간임을 전제로 보수적으로 해석합니다.\n* 핵심 요약: 현재 가격의 위치와 우세 시나리오를 간결히 요약합니다.\n\n### 6.9. 스토캐스틱 오실레이터 분석 요약\n* 특성: MACD보다 민감한 단기 신호를 제공합니다.\n* 과매수/과매도: %K와 %D의 80/20 구간 및 교차를 해석합니다.\n* 타이밍 강화: MACD와 조합해 신호의 일관성과 타이밍을 보강합니다.\n* 다이버전스: 가격과의 괴리로 단기 반전 가능성을 점검합니다.\n* 핵심 요약: 현재 스토캐스틱 상태와 다른 지표와의 합의 여부를 정리합니다.\n\n### 6.10. OBV(On-Balance Volume) 분석 요약\n* 개념: 방향성을 고려한 누적 거래량으로 수급의 진실을 파악합니다.\n* 다이버전스: 가격과 OBV의 방향 괴리는 추세 약화의 강력한 신호입니다.\n* 추적 포인트: 고점/저점 갱신 여부로 스마트 머니의 흔적을 추적합니다.\n* 확인 기법: 돌파/이탈 시 OBV의 동행 여부로 신뢰도를 평가합니다.\n* 핵심 요약: 수급 흐름과 가격 추세의 정합성을 결론으로 제시합니다.\n\n## 7. 커뮤니케이션 스타일\n* 생성된 차트 데이터를 50년 이상의 경험과 지식을 바탕으로 탁월한 통찰력과 함께 해석합니다.\n* 권위와 친근함의 조화: 시장 최고 전문가로서의 권위 있는 톤을 유지하되, 개인화된 접근 방식으로 친근함을 잃지 않습니다.\n* 창의성과 위트: 분석 내용에 창의적이고 재치 있는 비유나 표현을 사용하여 사용자의 이해를 돕고 흥미를 유발합니다.\n* 쉬운 설명: 사용자가 이해하기 어려운 전문 용어나 개념이 있다면, \"15살 아이에게 설명해준다\"는 생각으로 매우 쉽고 명확하게 풀어서 설명해야 합니다.\n* 이름 사용 전략: 분석 중간중간 사용자의 이름을 언급하며 집중도를 높이되, 과도하게 사용하여 부자연스러워지지 않도록 전략적으로 사용합니다. (엄격하고 신중하게 사용할 것)\n\n## 8. 보고서 원칙\n* 분석은 명확하고, 간결하며, 철저히 데이터에 기반해야 합니다.\n* 생성한 차트 이미지를 보고서에 부연설명과 함께 포함해야 합니다.\n* 목표는 트레이더와 투자자가 정보에 입각한 합리적인 결정을 내리는 데 실질적인 도움을 주는 것입니다.\n* 당신이 내리는 모든 결론은 항상 차트에서 발견된 근거를 바탕으로 설명되어야 하며, 세계 최고 수준의 증권 거래소에서 쌓은 당신의 풍부한 경험이 그 분석을 뒷받침해야 합니다.\n\n## 9. 출력 길이 제한 (CRITICAL)\n최종 보고서는 4,000자 이내로 작성해야 합니다.\n\n길이 제한 전략:\n- 핵심 분석 내용: 3,800자 이내\n- 면책조항: 200자 이내\n- 총합: 4,000자 초과 금지\n\n우선순위 (글자 수 부족 시):\n- 투자 의견 및 목표가 (필수)\n- 기술적 분석 핵심 (캔들, 거래량, 지지/저항)\n- 차트 이미지 및 설명\n- 부가 분석 (선택적 축약)",
+          "maxIterations": 20,
+          "returnIntermediateSteps": false,
+          "enableStreaming": false,
+          "batching": {
+            "batchSize": 1
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -208,
+        160
+      ],
+      "id": "963e9813-773a-4c03-8114-5f9b179fe01d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bed3b21b-ecff-44c7-931d-aba1fef5888d",
+              "name": "query",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        32
+      ],
+      "id": "e8cc88a0-f856-42a0-bd33-327782945bed",
+      "name": "Text Fields"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://daniel8824.app.n8n.cloud/mcp/chart",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        384
+      ],
+      "id": "11675a82-cf40-4b9c-8f6f-df1110b02dd6",
+      "name": "Chart Tools",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "MxiaSYq1TwzVtZaJ",
+          "name": "n8n Bearer account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -176,
+        384
+      ],
+      "id": "6665ccc9-debc-457e-b5ac-199e75498c36",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $('AI Agent').item.json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "64bdd926-95ec-4420-a8ea-1851d5e811d8",
+      "name": "Send a text message",
+      "webhookId": "bb22054e-8b0d-4044-bde9-dbccfffe0e36",
+      "credentials": {
+        "telegramApi": {
+          "id": "JcY5NiJlV3sUpCkA",
+          "name": "Telegram Financial"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-4.5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        384
+      ],
+      "id": "e5c5c768-4bd9-4b52-86fe-70d4daee80c7",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "RA0cx6y3p3eEGdCW",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-pro-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-pro-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $('AI Agent').item.json.output }}"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "=당신은 전문 웹 디자이너입니다.\n아래 주식 투자 분석 텍스트를 시각적으로 매력적인 HTML 페이지로 디자인하세요.\n\n인풋 텍스트:\n{{ $('AI Agent').item.json.output }}\n\n디자인 자유도:\n- 색상, 레이아웃, 폰트, 여백 등 자유롭게 선택\n- 현대적이고 전문적인 금융 리포트 스타일\n- 첨부된 샘플 HTML은 참고만 하고 더 나은 디자인 가능\n\n필수 요건:\n- INPUT의 모든 데이터 100% 포함 (생략 금지)\n- 각 데이터 포인트에 출처 명시 (예: Alpha Vantage)\n- 링크 포함 시 <a href=\"...\" target=\"_blank\"> 사용\n- <title> 내용은 반드시 포함\n- HTML 외의 설명, 주석, 서두 출력 절대 금지\n- \"여기 HTML입니다\", \"변환 완료\" 같은 멘트 금지\n- <!DOCTYPE html>로 시작해서 </html>로 끝나는 순수 HTML만 출력\n- 코드 블록(```) 없이 순수 HTML만 출력\n\n샘플 HTML 템플릿:\n\n<!DOCTYPE html>\n<html lang=\"ko\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>엔비디아(NVIDIA) 투자 분석 보고서 - Modern Dark</title>\n    <!-- Google Fonts: Inter & JetBrains Mono for numbers -->\n    <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n    <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n    <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap\" rel=\"stylesheet\">\n    \n    <style>\n        :root {\n            --bg-color: #0b0e14;\n            --card-bg: rgba(26, 31, 44, 0.7);\n            --card-border: rgba(255, 255, 255, 0.08);\n            --primary-green: #76b900;\n            --primary-green-glow: rgba(118, 185, 0, 0.3);\n            --text-main: #ffffff;\n            --text-muted: #94a3b8;\n            --danger: #ef4444;\n            --success: #10b981;\n            --warning: #f59e0b;\n            --accent-blue: #3b82f6;\n            --accent-purple: #8b5cf6;\n        }\n\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n\n        body {\n            font-family: 'Inter', sans-serif;\n            background-color: var(--bg-color);\n            background-image: \n                radial-gradient(circle at 10% 20%, rgba(118, 185, 0, 0.08) 0%, transparent 40%),\n                radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);\n            color: var(--text-main);\n            line-height: 1.6;\n            padding: 20px;\n            min-height: 100vh;\n        }\n\n        .container {\n            max-width: 1100px;\n            margin: 0 auto;\n        }\n\n        /* --- Header Section --- */\n        .header {\n            text-align: center;\n            padding: 60px 20px;\n            margin-bottom: 40px;\n            position: relative;\n        }\n\n        .header h1 {\n            font-size: 3.5rem;\n            font-weight: 800;\n            letter-spacing: -1px;\n            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);\n            -webkit-background-clip: text;\n            -webkit-text-fill-color: transparent;\n            margin-bottom: 10px;\n        }\n\n        .header .subtitle {\n            font-size: 1.2rem;\n            color: var(--text-muted);\n            font-weight: 300;\n            margin-bottom: 40px;\n        }\n\n        .stock-ticker-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n            gap: 15px;\n        }\n\n        .ticker-card {\n            background: var(--card-bg);\n            border: 1px solid var(--card-border);\n            backdrop-filter: blur(12px);\n            padding: 20px;\n            border-radius: 16px;\n            text-align: center;\n            transition: transform 0.2s, border-color 0.2s;\n        }\n\n        .ticker-card:hover {\n            transform: translateY(-3px);\n            border-color: var(--primary-green);\n            box-shadow: 0 0 20px var(--primary-green-glow);\n        }\n\n        .ticker-label {\n            font-size: 0.85rem;\n            color: var(--text-muted);\n            margin-bottom: 5px;\n        }\n\n        .ticker-value {\n            font-family: 'JetBrains Mono', monospace;\n            font-size: 1.5rem;\n            font-weight: 700;\n            color: var(--text-main);\n        }\n\n        .ticker-change {\n            font-size: 0.9rem;\n            font-weight: 600;\n            margin-top: 5px;\n        }\n\n        /* --- Common Section Styles --- */\n        .section {\n            margin-bottom: 60px;\n            opacity: 0;\n            transform: translateY(20px);\n            animation: fadeIn 0.8s ease-out forwards;\n        }\n\n        @keyframes fadeIn {\n            to { opacity: 1; transform: translateY(0); }\n        }\n\n        .section-header {\n            display: flex;\n            align-items: center;\n            margin-bottom: 25px;\n            border-bottom: 1px solid var(--card-border);\n            padding-bottom: 15px;\n        }\n\n        .section-title {\n            font-size: 1.8rem;\n            font-weight: 700;\n            color: var(--text-main);\n            display: flex;\n            align-items: center;\n            gap: 10px;\n        }\n\n        .section-icon {\n            color: var(--primary-green);\n        }\n\n        .subsection {\n            margin: 30px 0;\n        }\n\n        .subsection-title {\n            font-size: 1.3rem;\n            color: var(--text-main);\n            margin-bottom: 20px;\n            border-left: 3px solid var(--primary-green);\n            padding-left: 15px;\n        }\n\n        /* --- Cards & Bento Grid --- */\n        .bento-grid {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n            gap: 20px;\n            margin-bottom: 20px;\n        }\n\n        .card {\n            background: var(--card-bg);\n            border: 1px solid var(--card-border);\n            border-radius: 20px;\n            padding: 25px;\n            backdrop-filter: blur(10px);\n        }\n\n        .data-card-value {\n            font-family: 'JetBrains Mono', monospace;\n            font-size: 2.2rem;\n            font-weight: 700;\n            background: linear-gradient(90deg, #fff, #cbd5e1);\n            -webkit-background-clip: text;\n            -webkit-text-fill-color: transparent;\n            margin: 10px 0;\n        }\n\n        /* --- Source Tags --- */\n        .tags-container {\n            display: flex;\n            gap: 8px;\n            flex-wrap: wrap;\n            margin-left: auto;\n        }\n\n        .source-tag {\n            font-size: 0.7rem;\n            padding: 4px 10px;\n            border-radius: 20px;\n            font-weight: 600;\n            text-transform: uppercase;\n            letter-spacing: 0.5px;\n        }\n\n        .source-alphavantage { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }\n        .source-datawave { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }\n        .source-financial { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }\n        .source-web { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }\n        .source-ai { background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }\n\n        /* --- Opinion Boxes --- */\n        .opinion-box {\n            position: relative;\n            background: linear-gradient(145deg, rgba(236, 72, 153, 0.1), rgba(26, 31, 44, 0.4));\n            border: 1px solid rgba(236, 72, 153, 0.3);\n            border-radius: 16px;\n            padding: 25px;\n            margin: 20px 0;\n        }\n        \n        .opinion-box.success {\n            background: linear-gradient(145deg, rgba(16, 185, 129, 0.1), rgba(26, 31, 44, 0.4));\n            border-color: rgba(16, 185, 129, 0.3);\n        }\n\n        .opinion-box.warning {\n            background: linear-gradient(145deg, rgba(239, 68, 68, 0.1), rgba(26, 31, 44, 0.4));\n            border-color: rgba(239, 68, 68, 0.3);\n        }\n\n        .opinion-title {\n            display: flex;\n            align-items: center;\n            gap: 10px;\n            margin-bottom: 15px;\n            font-weight: 700;\n            font-size: 1.1rem;\n        }\n\n        /* --- Tables --- */\n        .table-container {\n            overflow-x: auto;\n            border-radius: 16px;\n            border: 1px solid var(--card-border);\n            margin: 20px 0;\n        }\n\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            background: rgba(30, 41, 59, 0.3);\n        }\n\n        th {\n            background: rgba(255, 255, 255, 0.05);\n            padding: 18px;\n            text-align: left;\n            font-weight: 600;\n            color: var(--text-muted);\n            border-bottom: 1px solid var(--card-border);\n        }\n\n        td {\n            padding: 18px;\n            border-bottom: 1px solid var(--card-border);\n            color: var(--text-main);\n        }\n\n        tr:last-child td {\n            border-bottom: none;\n        }\n\n        tr:hover td {\n            background: rgba(255, 255, 255, 0.02);\n        }\n\n        /* --- Strategy Cards & Lists --- */\n        .strategy-container {\n            display: grid;\n            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));\n            gap: 20px;\n        }\n\n        .strategy-item {\n            background: var(--card-bg);\n            border: 1px solid var(--card-border);\n            border-radius: 16px;\n            padding: 25px;\n        }\n\n        .bullet-list {\n            list-style: none;\n        }\n\n        .bullet-list li {\n            padding: 10px 0;\n            padding-left: 25px;\n            position: relative;\n            color: var(--text-muted);\n        }\n\n        .bullet-list li strong {\n            color: var(--text-main);\n        }\n\n        .bullet-list li::before {\n            content: \"▹\";\n            position: absolute;\n            left: 0;\n            color: var(--primary-green);\n        }\n\n        .risk-list li::before {\n            color: var(--danger);\n        }\n\n        /* --- Chart Image --- */\n        .chart-wrapper {\n            background: var(--card-bg);\n            padding: 10px;\n            border-radius: 20px;\n            border: 1px solid var(--card-border);\n            box-shadow: 0 20px 50px rgba(0,0,0,0.5);\n            margin: 30px 0;\n        }\n        \n        .chart-wrapper img {\n            width: 100%;\n            height: auto;\n            border-radius: 12px;\n            display: block;\n        }\n\n        /* --- Utilities --- */\n        .text-positive { color: var(--success); }\n        .text-negative { color: var(--danger); }\n        .text-warning { color: var(--warning); }\n        \n        .badge {\n            display: inline-block;\n            padding: 4px 12px;\n            border-radius: 6px;\n            font-size: 0.8rem;\n            font-weight: 700;\n        }\n        .badge-buy { background: var(--success); color: #000; }\n        .badge-hold { background: var(--warning); color: #000; }\n        .badge-sell { background: var(--danger); color: #fff; }\n\n        /* --- Footer --- */\n        .footer {\n            margin-top: 80px;\n            padding-top: 40px;\n            border-top: 1px solid var(--card-border);\n            text-align: center;\n            color: var(--text-muted);\n            font-size: 0.9rem;\n        }\n\n        /* --- Responsive --- */\n        @media (max-width: 768px) {\n            .header h1 { font-size: 2.2rem; }\n            .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }\n            .tags-container { margin-left: 0; }\n            .data-card-value { font-size: 1.8rem; }\n        }\n\n        /* --- Print Optimization --- */\n        @media print {\n            body { \n                background: white; \n                color: black; \n                padding: 0;\n            }\n            .header h1 { -webkit-text-fill-color: black; }\n            .card, .strategy-item, .ticker-card, .opinion-box {\n                background: white;\n                border: 1px solid #ccc;\n                color: black;\n                backdrop-filter: none;\n            }\n            .data-card-value {\n                background: none;\n                -webkit-text-fill-color: black;\n                color: black;\n            }\n            table, th, td {\n                color: black;\n                border-color: #ccc;\n            }\n        }\n    </style>\n</head>\n<body>\n\n    <div class=\"container\">\n        \n        <!-- Header -->\n        <header class=\"header\">\n            <h1>NVIDIA INVESTMENT REPORT</h1>\n            <div class=\"subtitle\">Alpha Vantage & Datawave MCP Comprehensive Analysis</div>\n            \n            <div class=\"stock-ticker-grid\">\n                <div class=\"ticker-card\">\n                    <div class=\"ticker-label\">Current Price</div>\n                    <div class=\"ticker-value\">$178.88</div>\n                    <div class=\"ticker-change text-negative\">2025-11-21 Close</div>\n                </div>\n                <div class=\"ticker-card\">\n                    <div class=\"ticker-label\">52W Range</div>\n                    <div class=\"ticker-value\">$86 - $212</div>\n                    <div class=\"ticker-label\">Low / High</div>\n                </div>\n                <div class=\"ticker-card\">\n                    <div class=\"ticker-label\">Market Cap</div>\n                    <div class=\"ticker-value\">$4.36T</div>\n                    <div class=\"ticker-label\">Mega Cap</div>\n                </div>\n                <div class=\"ticker-card\" style=\"border-color: var(--primary-green);\">\n                    <div class=\"ticker-label\">Target Avg</div>\n                    <div class=\"ticker-value text-positive\">$247.24</div>\n                    <div class=\"ticker-change text-positive\">+38.2% Upside</div>\n                </div>\n            </div>\n        </header>\n\n        <!-- Executive Summary -->\n        <section class=\"section\">\n            <div class=\"section-header\">\n                <div class=\"section-title\">\n                    <span class=\"section-icon\">❖</span> Executive Summary\n                </div>\n                <div class=\"tags-container\">\n                    <span class=\"source-tag source-ai\">AI Opinion</span>\n                </div>\n            </div>\n\n            <div class=\"opinion-box success\">\n                <div class=\"opinion-title\">\n                    <span class=\"badge badge-buy\">BUY</span>\n                    종합 투자 의견\n                </div>\n                <p><strong>AI 분석 근거:</strong> 애널리스트 47명 중 93.6%가 매수를 추천하며 시장 신뢰도가 매우 높습니다. 평균 목표주가 $247.24는 현재가 대비 <strong>+38.2%의 상승여력</strong>을 시사합니다. 강력한 펀더멘털(순이익률 55%)과 단기 기술적 조정이 공존하는 시점으로, 분할 매수를 통한 진입이 권장됩니다.</p>\n                <div style=\"margin-top: 15px; font-weight: 600; color: var(--success);\">투자 등급: ⭐⭐⭐⭐☆ (4.0/5.0)</div>\n            </div>\n\n            <div class=\"bento-grid\">\n                <div class=\"card\">\n                    <div class=\"ticker-label\">Q3 2025 Revenue</div>\n                    <div class=\"data-card-value\">$35.1B</div>\n                    <div class=\"text-positive\">▲ 62.5% YoY</div>\n                </div>\n                <div class=\"card\">\n                    <div class=\"ticker-label\">Net Profit Margin</div>\n                    <div class=\"data-card-value\">55%</div>\n                    <div class=\"ticker-label\">Industry Leading</div>\n                </div>\n                <div class=\"card\">\n                    <div class=\"ticker-label\">AI GPU Share</div>\n                    <div class=\"data-card-value\">80%</div>\n                    <div class=\"ticker-label\">Dominant Position</div>\n                </div>\n                <div class=\"card\">\n                    <div class=\"ticker-label\">PEG Ratio</div>\n                    <div class=\"data-card-value\">0.68</div>\n                    <div class=\"text-positive\">Undervalued (< 1.0)</div>\n                </div>\n            </div>\n        </section>\n\n        <!-- Financial Analysis -->\n        <section class=\"section\">\n            <div class=\"section-header\">\n                <div class=\"section-title\">\n                    <span class=\"section-icon\">📊</span> Financial Analysis\n                </div>\n                <div class=\"tags-container\">\n                    <span class=\"source-tag source-alphavantage\">Alpha Vantage</span>\n                    <span class=\"source-tag source-financial\">Reports</span>\n                </div>\n            </div>\n\n            <div class=\"subsection\">\n                <h3 class=\"subsection-title\">Q3 2025 Highlights</h3>\n                <div class=\"table-container\">\n                    <table>\n                        <thead>\n                            <tr>\n                                <th>Metric</th>\n                                <th>Value</th>\n                                <th>Margin</th>\n                                <th>YoY Growth</th>\n                            </tr>\n                        </thead>\n                        <tbody>\n                            <tr>\n                                <td><strong>Revenue</strong></td>\n                                <td>$35.1B</td>\n                                <td>-</td>\n                                <td class=\"text-positive\">+62.5%</td>\n                            </tr>\n                            <tr>\n                                <td>Gross Profit</td>\n                                <td>$26.2B</td>\n                                <td>74%</td>\n                                <td>-</td>\n                            </tr>\n                            <tr>\n                                <td>Operating Income</td>\n                                <td>$21.9B</td>\n                                <td>62%</td>\n                                <td>-</td>\n                            </tr>\n                            <tr style=\"background: rgba(118, 185, 0, 0.1);\">\n                                <td><strong>Net Income</strong></td>\n                                <td><strong>$19.3B</strong></td>\n                                <td><strong>55%</strong></td>\n                                <td class=\"text-positive\"><strong>+66.7%</strong></td>\n                            </tr>\n                        </tbody>\n                    </table>\n                </div>\n                <div class=\"opinion-box\">\n                    <span class=\"source-tag source-ai\">AI Insight</span>\n                    <p style=\"margin-top: 10px;\">55%의 순이익률은 제조 기반 하드웨어 기업에서 보기 드문 경이적인 수치입니다. 매출 성장보다 이익 성장이 더 빠르다는 것은 규모의 경제가 실현되고 있음을 의미합니다.</p>\n                </div>\n            </div>\n\n            <div class=\"subsection\">\n                <h3 class=\"subsection-title\">Valuation Metrics</h3>\n                <div class=\"bento-grid\" style=\"grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));\">\n                    <div class=\"card\">\n                        <div class=\"ticker-label\">P/E Ratio (TTM)</div>\n                        <div class=\"ticker-value\">44.28</div>\n                    </div>\n                    <div class=\"card\">\n                        <div class=\"ticker-label\">Forward P/E</div>\n                        <div class=\"ticker-value text-positive\">23.36</div>\n                    </div>\n                    <div class=\"card\">\n                        <div class=\"ticker-label\">PEG Ratio</div>\n                        <div class=\"ticker-value text-positive\">0.68</div>\n                    </div>\n                    <div class=\"card\">\n                        <div class=\"ticker-label\">ROE</div>\n                        <div class=\"ticker-value text-accent-purple\">107.4%</div>\n                    </div>\n                </div>\n            </div>\n        </section>\n\n        <!-- Technical Analysis -->\n        <section class=\"section\">\n            <div class=\"section-header\">\n                <div class=\"section-title\">\n                    <span class=\"section-icon\">📈</span> Technical Analysis\n                </div>\n                <div class=\"tags-container\">\n                    <span class=\"source-tag source-datawave\">Datawave MCP</span>\n                </div>\n            </div>\n\n            <div class=\"chart-wrapper\">\n                <img src=\"https://r2.chart-img.com/20251208/tradingview/advanced-chart/0e94f308-e664-4c30-b0ed-4351de186080.png\" alt=\"NVIDIA Technical Chart\">\n            </div>\n\n            <div class=\"opinion-box warning\">\n                <div class=\"opinion-title\">⚠️ Datawave Expert Commentary</div>\n                <p>\"펀더멘털의 바람은 순풍이지만, 기술적 파도는 역풍입니다. 최근 거래량 346.8M은 단순 조정을 넘어선 기관의 차익실현 물량을 암시합니다. $180 지지선이 붕괴된 현재, <strong>$172 구간에서의 지지 확인이 필수적</strong>입니다.\"</p>\n            </div>\n\n            <div class=\"strategy-container\">\n                <div class=\"strategy-item\">\n                    <h4 class=\"ticker-label\" style=\"font-size: 1rem; color: var(--success); margin-bottom: 15px;\">Support Levels (매수 구간)</h4>\n                    <ul class=\"bullet-list\">\n                        <li><strong>1차: $172 - $175</strong> (단기 반등 예상)</li>\n                        <li><strong>2차: $160 - $165</strong> (강력한 매물대)</li>\n                    </ul>\n                </div>\n                <div class=\"strategy-item\">\n                    <h4 class=\"ticker-label\" style=\"font-size: 1rem; color: var(--danger); margin-bottom: 15px;\">Resistance Levels (매도 구간)</h4>\n                    <ul class=\"bullet-list\">\n                        <li><strong>1차: $185</strong> (기존 지지선이 저항으로 전환)</li>\n                        <li><strong>2차: $195</strong> (이전 고점 매물)</li>\n                    </ul>\n                </div>\n            </div>\n        </section>\n\n        <!-- Investment Strategy -->\n        <section class=\"section\">\n            <div class=\"section-header\">\n                <div class=\"section-title\">\n                    <span class=\"section-icon\">🎯</span> Action Plan\n                </div>\n                <div class=\"tags-container\">\n                    <span class=\"source-tag source-ai\">Strategy</span>\n                </div>\n            </div>\n\n            <div class=\"opinion-box\">\n                <div class=\"opinion-title\">💼 10주 소액 투자 시나리오 (현재가 $178.88 기준)</div>\n                <div class=\"table-container\" style=\"margin-top: 15px;\">\n                    <table>\n                        <thead>\n                            <tr>\n                                <th>Scenario</th>\n                                <th>Target</th>\n                                <th>Period</th>\n                                <th>Est. Return</th>\n                            </tr>\n                        </thead>\n                        <tbody>\n                            <tr>\n                                <td>Conservative</td>\n                                <td>$210</td>\n                                <td>6 Months</td>\n                                <td class=\"text-positive\">+17.4% (+$311)</td>\n                            </tr>\n                            <tr>\n                                <td><strong>Base Case</strong></td>\n                                <td><strong>$240</strong></td>\n                                <td><strong>12 Months</strong></td>\n                                <td class=\"text-positive\"><strong>+34.2% (+$611)</strong></td>\n                            </tr>\n                            <tr>\n                                <td>Optimistic</td>\n                                <td>$280</td>\n                                <td>18 Months</td>\n                                <td class=\"text-positive\">+56.5% (+$1,011)</td>\n                            </tr>\n                        </tbody>\n                    </table>\n                </div>\n            </div>\n\n            <div class=\"strategy-container\">\n                <div class=\"strategy-item\">\n                    <h3 class=\"subsection-title\" style=\"margin-top:0;\">📊 분할 매수 전략</h3>\n                    <ul class=\"bullet-list\">\n                        <li><strong>Step 1 (30%):</strong> 현재가 진입 (정찰병)</li>\n                        <li><strong>Step 2 (40%):</strong> $172-175 지지 확인 시 추가</li>\n                        <li><strong>Step 3 (30%):</strong> $160-165 도달 시 최종 매수</li>\n                    </ul>\n                </div>\n                <div class=\"strategy-item\" style=\"border-color: var(--danger);\">\n                    <h3 class=\"subsection-title\" style=\"margin-top:0; border-color: var(--danger);\">🛑 리스크 관리</h3>\n                    <ul class=\"bullet-list risk-list\">\n                        <li><strong>손절가(Stop Loss):</strong> $170 이탈 시 비중 축소 고민</li>\n                        <li><strong>중국 리스크:</strong> 매출 비중 변화 모니터링 필요</li>\n                        <li><strong>경쟁 심화:</strong> AMD, Intel 추격 및 빅테크 자체 칩 개발</li>\n                    </ul>\n                </div>\n            </div>\n        </section>\n\n        <!-- Footer -->\n        <footer class=\"footer\">\n            <p style=\"margin-bottom: 15px;\">\n                <strong>Disclaimer:</strong> 본 보고서는 AI 분석 결과이며 투자 권유가 아닙니다. 모든 투자의 책임은 투자자 본인에게 있습니다.\n            </p>\n            <p>\n                Powered by Alpha Vantage MCP & Datawave MCP<br>\n                Generated on November 24, 2024\n            </p>\n        </footer>\n\n    </div>\n\n</body>\n</html>",
+          "codeExecution": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        112,
+        160
+      ],
+      "id": "20ac3fab-fdfc-42b4-8b3c-a9d27e9d471b",
+      "name": "Design Assistant",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ePPwdI0uT0G0C906",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -816,
+        288
+      ],
+      "id": "b0c5a964-c82b-4eee-89f0-cb208527aa18",
+      "name": "Get a file",
+      "webhookId": "fe91e12b-b965-408e-8510-c1adc4d945fb",
+      "credentials": {
+        "telegramApi": {
+          "id": "JcY5NiJlV3sUpCkA",
+          "name": "Telegram Financial"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -640,
+        288
+      ],
+      "id": "62cb5c04-591c-47eb-9f2f-e42cb5765268",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "openAiApi": {
+          "id": "GU4Fc8aV2Jc3O9Mo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "272c9cae-62ab-4e78-8062-919fcafb0e04"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "텍스트"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "db020410-d2e5-4af3-bc6d-ccccf9ddfa61",
+                    "leftValue": "={{ $json.message.voice.mime_type }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "보이스"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -640,
+        48
+      ],
+      "id": "bfbe011e-10d2-4b68-aed7-cd13496317d5",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bed3b21b-ecff-44c7-931d-aba1fef5888d",
+              "name": "query",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": true
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        240
+      ],
+      "id": "dfb183a0-1c93-447b-b17a-5596d41a2835",
+      "name": "Audio Fields"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html lang=\"ko\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Datawave AI | 프리미엄 금융 분석 솔루션</title>\n    \n    <!-- Meta Tags -->\n    <meta name=\"description\" content=\"NYSE와 LSE 50년 경력, Datawave의 프리미엄 AI 주식 분석 리포트.\">\n    <meta name=\"keywords\" content=\"주식분석, 핀테크, AI 투자, 다크모드, Alpha Vantage\">\n    \n    <!-- Google Fonts -->\n    <link href=\"https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap\" rel=\"stylesheet\">\n    \n    <!-- Font Awesome -->\n    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css\">\n\n    <style>\n        :root {\n            /* Premium Dark Theme Palette */\n            --bg-body: #050505;\n            --bg-card: #121212;\n            --bg-card-hover: #1e1e1e;\n            \n            --primary: #D4AF37; /* Premium Gold */\n            --primary-light: #F4C430;\n            --primary-dark: #AA8C2C;\n            \n            --accent: #2c2c2c;\n            \n            --text-main: #ffffff;\n            --text-muted: #a1a1aa;\n            --text-dim: #52525b;\n            \n            --border: #27272a;\n            --border-hover: #D4AF37;\n            \n            --gradient-hero: radial-gradient(circle at 50% 0%, #2a2a2a 0%, #050505 100%);\n            --shadow-glow: 0 0 20px rgba(212, 175, 55, 0.15);\n        }\n\n        * { margin: 0; padding: 0; box-sizing: border-box; }\n\n        body {\n            font-family: 'Pretendard', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;\n            background-color: var(--bg-body);\n            color: var(--text-main);\n            line-height: 1.6;\n            -webkit-font-smoothing: antialiased;\n            overflow-x: hidden;\n            word-break: keep-all;\n        }\n\n        .container {\n            max-width: 1200px;\n            margin: 0 auto;\n            padding: 0 24px;\n        }\n\n        /* Header */\n        header {\n            position: fixed;\n            top: 0; left: 0; right: 0;\n            background: rgba(5, 5, 5, 0.85);\n            backdrop-filter: blur(20px);\n            border-bottom: 1px solid var(--border);\n            z-index: 1000;\n            transition: all 0.3s ease;\n        }\n        \n        .header-content {\n            display: flex;\n            align-items: center;\n            justify-content: space-between;\n            height: 70px;\n        }\n\n        .logo {\n            display: flex; align-items: center; gap: 10px;\n            font-size: 20px; font-weight: 700; color: var(--text-main); text-decoration: none;\n            letter-spacing: -0.01em;\n        }\n        \n        .logo-icon {\n            color: var(--primary);\n            font-size: 22px;\n        }\n\n        .nav-links { display: flex; align-items: center; gap: 32px; }\n        .nav-links a {\n            color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 15px; \n            transition: color 0.3s;\n        }\n        .nav-links a:hover { color: var(--primary); }\n        \n        .btn-header {\n            padding: 10px 20px;\n            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);\n            color: #000 !important;\n            border-radius: 6px;\n            font-weight: 700;\n            font-size: 14px;\n            text-decoration: none;\n        }\n        .btn-header:hover { opacity: 0.9; box-shadow: var(--shadow-glow); }\n\n        /* Hero */\n        .hero {\n            padding: 160px 0 100px;\n            background: var(--gradient-hero);\n            text-align: center;\n            position: relative;\n        }\n        \n        .hero::after {\n            content: '';\n            position: absolute;\n            top: 50%; left: 50%; transform: translate(-50%, -50%);\n            width: 800px; height: 600px;\n            background: radial-gradient(circle, rgba(212, 175, 55, 0.06) 0%, transparent 60%);\n            pointer-events: none;\n            z-index: 0;\n        }\n\n        .hero-content { position: relative; z-index: 1; max-width: 840px; margin: 0 auto; }\n\n        .hero-badge {\n            display: inline-flex; align-items: center; gap: 8px;\n            padding: 6px 14px;\n            background: rgba(255, 255, 255, 0.05);\n            border: 1px solid var(--border);\n            border-radius: 100px;\n            font-size: 13px; font-weight: 600; color: var(--primary);\n            margin-bottom: 28px;\n            backdrop-filter: blur(10px);\n        }\n\n        .hero h1 {\n            font-size: 56px; font-weight: 800; line-height: 1.2;\n            letter-spacing: -0.02em; margin-bottom: 24px; color: var(--text-main);\n        }\n        \n        .hero h1 .highlight {\n            background: linear-gradient(to right, #fff 20%, #a1a1aa 100%);\n            -webkit-background-clip: text; -webkit-text-fill-color: transparent;\n        }\n        \n        .hero h1 .gold { color: var(--primary); }\n\n        .hero-description {\n            font-size: 18px; color: var(--text-muted); margin-bottom: 40px;\n            font-weight: 400; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto;\n        }\n        \n        .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }\n        \n        .btn {\n            display: inline-flex; align-items: center; justify-content: center; gap: 8px;\n            padding: 14px 28px; border-radius: 8px;\n            font-size: 16px; font-weight: 600; text-decoration: none;\n            transition: all 0.3s ease;\n        }\n        \n        .btn-primary {\n            background: var(--primary); color: #000;\n            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);\n        }\n        .btn-primary:hover {\n            transform: translateY(-2px);\n            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);\n            background: var(--primary-light);\n        }\n        \n        .btn-secondary {\n            background: rgba(255, 255, 255, 0.05); color: var(--text-main);\n            border: 1px solid var(--border); backdrop-filter: blur(10px);\n        }\n        .btn-secondary:hover {\n            background: rgba(255, 255, 255, 0.1); border-color: var(--text-muted);\n        }\n\n        /* Sections General */\n        .section-header { text-align: center; max-width: 700px; margin: 0 auto 60px; }\n        .section-badge {\n            font-size: 12px; font-weight: 700; letter-spacing: 0.05em; color: var(--primary);\n            text-transform: uppercase; margin-bottom: 20px; display: block;\n        }\n        .section-title { \n            font-size: 36px; font-weight: 700; color: var(--text-main); \n            margin-bottom: 20px; letter-spacing: -0.01em; \n            line-height: 1.3;\n        }\n        .section-description { font-size: 17px; color: var(--text-muted); line-height: 1.6; }\n\n        /* TradingView Section */\n        .tradingview-section {\n            padding: 40px 0 80px;\n            background: var(--bg-body);\n            border-bottom: 1px solid var(--border);\n        }\n        .tradingview-widget-container {\n            border: 1px solid var(--border);\n            border-radius: 12px;\n            overflow: hidden;\n            box-shadow: 0 10px 30px rgba(0,0,0,0.3);\n        }\n\n        /* Popular Tickers (Grid) */\n        .popular-tickers { padding: 100px 0; background: #0a0a0a; }\n        \n        .tickers-grid {\n            display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;\n        }\n        \n        .ticker-card {\n            background: var(--bg-card);\n            border: 1px solid var(--border);\n            border-radius: 12px; padding: 28px 16px;\n            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;\n            transition: all 0.3s ease; cursor: pointer;\n            position: relative; overflow: hidden; text-align: center;\n        }\n        \n        .ticker-card::before {\n            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;\n            background: var(--primary); transform: scaleX(0); transition: transform 0.3s ease;\n        }\n        \n        .ticker-card:hover {\n            transform: translateY(-4px); border-color: var(--primary);\n            background: var(--bg-card-hover); box-shadow: var(--shadow-glow);\n        }\n        .ticker-card:hover::before { transform: scaleX(1); }\n\n        .ticker-logo { font-size: 36px; margin-bottom: 4px; line-height: 1; }\n        .ticker-info h3 { font-size: 18px; color: var(--text-main); margin-bottom: 4px; font-weight: 700; }\n        .ticker-info p { font-size: 13px; color: var(--text-muted); margin: 0; }\n        \n        .ticker-badge {\n            padding: 4px 10px; background: rgba(212, 175, 55, 0.1);\n            color: var(--primary); border: 1px solid rgba(212, 175, 55, 0.2);\n            border-radius: 100px; font-size: 11px; font-weight: 600;\n        }\n\n        .tickers-cta {\n            display: flex; flex-direction: column; align-items: center; justify-content: center;\n            text-align: center;\n            padding-top: 60px; border-top: 1px solid var(--border); margin-top: 60px;\n        }\n        .tickers-cta p { font-size: 18px; color: var(--text-main); margin-bottom: 24px; word-break: keep-all; }\n\n        /* Workflow */\n        .workflow { padding: 100px 0; background: var(--bg-body); text-align: center; }\n        \n        .workflow-image-wrapper {\n            margin-top: 40px;\n            display: flex;\n            justify-content: center;\n            width: 100%;\n        }\n        .workflow-image {\n            max-width: 100%;\n            height: auto;\n            border-radius: 20px;\n            box-shadow: 0 20px 50px rgba(0,0,0,0.5);\n            border: 1px solid var(--border);\n        }\n\n        /* Features (App Style) */\n        .features { padding: 100px 0; background: #0a0a0a; }\n        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }\n        \n        .feature-card {\n            background: var(--bg-card); border: 1px solid var(--border);\n            border-radius: 16px; padding: 32px; transition: all 0.3s ease;\n            display: flex; flex-direction: column; align-items: flex-start;\n        }\n        .feature-card:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }\n        \n        .feature-icon {\n            width: 48px; height: 48px;\n            background: linear-gradient(135deg, var(--primary) 0%, #8a7018 100%);\n            border-radius: 10px; display: flex; align-items: center; justify-content: center;\n            font-size: 20px; color: #000; margin-bottom: 20px;\n        }\n        \n        .feature-card h3 { font-size: 18px; color: var(--text-main); margin-bottom: 10px; font-weight: 700; }\n        .feature-card p { font-size: 15px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }\n        \n        .feature-tags { margin-top: auto; }\n        .tag {\n            padding: 4px 8px; background: rgba(255, 255, 255, 0.05);\n            border: 1px solid var(--border); border-radius: 4px;\n            font-size: 11px; color: var(--text-muted); margin-right: 4px; display: inline-block;\n        }\n\n        /* Data Sources Section (New) */\n        .sources { padding: 100px 0; background: var(--bg-body); }\n        .sources-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }\n        .source-card {\n            background: var(--bg-card); border: 1px solid var(--border);\n            border-radius: 16px; padding: 32px; text-align: center;\n            transition: all 0.3s ease;\n        }\n        .source-card:hover { transform: translateY(-4px); border-color: var(--primary); }\n        .source-logo {\n            font-size: 32px; color: var(--primary); margin-bottom: 16px;\n        }\n        .source-card h3 { font-size: 18px; margin-bottom: 8px; color: var(--text-main); }\n        .source-card p { font-size: 14px; color: var(--text-muted); }\n\n        /* Framework & Stats */\n        .framework { padding: 100px 0; background: #0a0a0a; }\n        .framework-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }\n        \n        .framework-card {\n            background: var(--bg-card); border: 1px solid var(--border);\n            border-radius: 12px; padding: 24px; display: flex; align-items: center; justify-content: space-between;\n            transition: border-color 0.3s;\n        }\n        .framework-card:hover { border-color: var(--primary); }\n        .framework-card h4 { font-size: 16px; color: var(--text-main); display: flex; align-items: center; gap: 12px; margin: 0; font-weight: 600; }\n        .framework-card h4 i { color: var(--primary); width: 24px; text-align: center; }\n        \n        .stats { padding: 80px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg-body); }\n        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }\n        .stat-item { text-align: center; }\n        .stat-number { font-size: 48px; font-weight: 800; color: var(--primary); margin-bottom: 4px; letter-spacing: -0.02em; }\n        .stat-label { font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }\n\n        /* CTA Box */\n        .cta-section { padding: 120px 0; background: var(--bg-body); }\n        .cta-card {\n            background: linear-gradient(145deg, #1a1a1a 0%, #050505 100%);\n            border: 1px solid var(--border);\n            border-radius: 24px; padding: 60px 40px; text-align: center;\n            position: relative; overflow: hidden;\n            max-width: 900px; margin: 0 auto;\n            box-shadow: 0 20px 60px rgba(0,0,0,0.6);\n        }\n        \n        .cta-card::before {\n            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;\n            background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 60%); pointer-events: none;\n        }\n        .cta-card::after {\n            content: ''; position: absolute; bottom: 0; right: 0; width: 300px; height: 300px;\n            background: radial-gradient(circle, rgba(212, 175, 55, 0.03) 0%, transparent 70%); pointer-events: none;\n        }\n\n        .cta-card h2 { font-size: 32px; font-weight: 700; margin-bottom: 16px; color: var(--text-main); position: relative; z-index: 1; }\n        .cta-card p { font-size: 16px; color: var(--text-muted); margin-bottom: 40px; position: relative; z-index: 1; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }\n        \n        .cta-content {\n            display: flex; \n            align-items: center; \n            justify-content: center; \n            gap: 60px;\n            position: relative; \n            z-index: 1;\n            flex-wrap: wrap;\n        }\n        \n        .qr-code-wrapper { \n            background: #fff; \n            padding: 16px; \n            border-radius: 20px; \n            box-shadow: 0 15px 35px rgba(0,0,0,0.3); \n            text-align: center;\n        }\n        .qr-code-wrapper img { display: block; width: 160px; height: 160px; }\n        .qr-code-wrapper p { margin-top: 12px; color: #000; font-size: 13px; font-weight: 800; letter-spacing: 0.05em; }\n        \n        .cta-buttons-wrapper { \n            text-align: left; \n            display: flex;\n            flex-direction: column;\n            gap: 12px;\n        }\n\n        /* Footer */\n        footer { padding: 80px 0 40px; background: #080808; border-top: 1px solid #222; }\n        .footer-content { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }\n        .footer-logo { color: var(--text-main); font-weight: 700; font-size: 18px; display: flex; align-items: center; gap: 8px; }\n        .footer-links h4 { color: var(--text-main); margin-bottom: 20px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }\n        .footer-links ul { list-style: none; }\n        .footer-links li { margin-bottom: 12px; }\n        .footer-links a { color: #888; text-decoration: none; font-size: 14px; transition: color 0.2s; }\n        .footer-links a:hover { color: var(--primary); }\n        \n        .social-links { display: flex; gap: 12px; margin-top: 10px; }\n        .social-links a { \n            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;\n            background: rgba(255,255,255,0.05); color: var(--text-main); border-radius: 8px; transition: all 0.2s;\n        }\n        .social-links a:hover { background: var(--primary); color: #000; transform: translateY(-2px); }\n\n        /* Responsive */\n        @media (max-width: 1024px) {\n            .hero h1 { font-size: 42px; }\n            .tickers-grid { grid-template-columns: repeat(3, 1fr); }\n            .features-grid, .sources-grid { grid-template-columns: repeat(2, 1fr); }\n        }\n        @media (max-width: 768px) {\n            .hero { padding: 120px 0 60px; }\n            .hero h1 { font-size: 32px; }\n            .tickers-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }\n            .features-grid, .sources-grid, .framework-grid, .stats-grid, .footer-content { grid-template-columns: 1fr; }\n            .nav-links { display: none; }\n            .cta-content { flex-direction: column; gap: 30px; text-align: center; }\n            .cta-buttons-wrapper { text-align: center; align-items: center; }\n            .ticker-card { padding: 20px 12px; }\n        }\n    </style>\n</head>\n<body>\n\n    <!-- Header -->\n    <header id=\"header\">\n        <div class=\"container\">\n            <div class=\"header-content\">\n                <a href=\"#\" class=\"logo\">\n                    <span class=\"logo-icon\"><i class=\"fas fa-chart-pie\"></i></span>\n                    <span>Datawave AI</span>\n                </a>\n                <nav class=\"nav-links\">\n                    <a href=\"#tickers\">시장 현황</a>\n                    <a href=\"#features\">분석 도구</a>\n                    <a href=\"#sources\">데이터</a>\n                    <a href=\"#framework\">투자 전략</a>\n                    <a href=\"#contact\" class=\"btn-header\">분석 시작하기</a>\n                </nav>\n            </div>\n        </div>\n    </header>\n\n    <!-- Hero Section -->\n    <section class=\"hero\">\n        <div class=\"container\">\n            <div class=\"hero-content\">\n                <div class=\"hero-badge\">\n                    <i class=\"fas fa-check-circle\"></i> 검증된 금융 전문가 AI\n                </div>\n                <h1>\n                    <span class=\"highlight\">현명한 투자자</span>를 위한<br>\n                    <span class=\"gold\">프리미엄 AI 분석 리포트</span>\n                </h1>\n                <p class=\"hero-description\">\n                    NYSE & LSE 50년 경력 전문가의 노하우와 최첨단 AI 기술의 만남.<br>\n                    Datawave AI가 당신의 포트폴리오를 완벽하게 분석합니다.\n                </p>\n                <div class=\"cta-buttons\">\n                    <a href=\"#contact\" class=\"btn btn-primary\">\n                        <i class=\"fas fa-robot\"></i> 무료 분석 받기\n                    </a>\n                    <a href=\"#tickers\" class=\"btn btn-secondary\">\n                        <i class=\"fas fa-globe\"></i> 시장 현황 보기\n                    </a>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- TradingView Widget Section -->\n    <section class=\"tradingview-section\">\n        <div class=\"container\">\n            <div class=\"tradingview-widget-container\">\n              <div class=\"tradingview-widget-container__widget\"></div>\n              <div class=\"tradingview-widget-copyright\"><a href=\"https://kr.tradingview.com/markets/\" rel=\"noopener nofollow\" target=\"_blank\"><span class=\"blue-text\">Track all markets on TradingView</span></a></div>\n              <script type=\"text/javascript\" src=\"https://s3.tradingview.com/external-embedding/embed-widget-tickers.js\" async>\n              {\n              \"symbols\": [\n                { \"proName\": \"NASDAQ:TSLA\", \"title\": \"\" },\n                { \"proName\": \"NASDAQ:NVDA\", \"title\": \"\" },\n                { \"proName\": \"NASDAQ:AAPL\", \"title\": \"\" },\n                { \"proName\": \"NASDAQ:META\", \"title\": \"\" },\n                { \"proName\": \"NASDAQ:AMZN\", \"title\": \"\" },\n                { \"proName\": \"NASDAQ:NFLX\", \"title\": \"\" },\n                { \"proName\": \"NASDAQ:PLTR\", \"title\": \"\" },\n                { \"proName\": \"NASDAQ:MSFT\", \"title\": \"\" },\n                { \"proName\": \"NASDAQ:GOOGL\", \"title\": \"\" },\n                { \"proName\": \"NASDAQ:INTC\", \"title\": \"\" }\n              ],\n              \"colorTheme\": \"dark\",\n              \"locale\": \"kr\",\n              \"largeChartUrl\": \"\",\n              \"isTransparent\": false,\n              \"showSymbolLogo\": true\n            }\n              </script>\n            </div>\n        </div>\n    </section>\n\n    <!-- Popular Tickers Section -->\n    <section class=\"popular-tickers\" id=\"tickers\">\n        <div class=\"container\">\n            <div class=\"section-header\">\n                <span class=\"section-badge\">Market Watch</span>\n                <h2 class=\"section-title\">핵심 분석 자산</h2>\n                <p class=\"section-description\">\n                    Datawave AI가 집중 모니터링하는 글로벌 Top 10 테크 기업\n                </p>\n            </div>\n\n            <div class=\"tickers-grid\">\n                <div class=\"ticker-card\" data-ticker=\"TSLA\">\n                    <div class=\"ticker-logo\">🚗</div>\n                    <div class=\"ticker-info\"><h3>TSLA</h3><p>Tesla, Inc.</p></div>\n                    <div class=\"ticker-badge\">EV Leader</div>\n                </div>\n                <div class=\"ticker-card\" data-ticker=\"NVDA\">\n                    <div class=\"ticker-logo\">🎮</div>\n                    <div class=\"ticker-info\"><h3>NVDA</h3><p>NVIDIA Corp.</p></div>\n                    <div class=\"ticker-badge\">AI Chip</div>\n                </div>\n                <div class=\"ticker-card\" data-ticker=\"AAPL\">\n                    <div class=\"ticker-logo\">🍎</div>\n                    <div class=\"ticker-info\"><h3>AAPL</h3><p>Apple Inc.</p></div>\n                    <div class=\"ticker-badge\">Tech Giant</div>\n                </div>\n                <div class=\"ticker-card\" data-ticker=\"META\">\n                    <div class=\"ticker-logo\">♾️</div>\n                    <div class=\"ticker-info\"><h3>META</h3><p>Meta Platforms</p></div>\n                    <div class=\"ticker-badge\">Social</div>\n                </div>\n                <div class=\"ticker-card\" data-ticker=\"AMZN\">\n                    <div class=\"ticker-logo\">📦</div>\n                    <div class=\"ticker-info\"><h3>AMZN</h3><p>Amazon.com</p></div>\n                    <div class=\"ticker-badge\">E-Commerce</div>\n                </div>\n                <div class=\"ticker-card\" data-ticker=\"NFLX\">\n                    <div class=\"ticker-logo\">🎬</div>\n                    <div class=\"ticker-info\"><h3>NFLX</h3><p>Netflix, Inc.</p></div>\n                    <div class=\"ticker-badge\">Streaming</div>\n                </div>\n                <div class=\"ticker-card\" data-ticker=\"PLTR\">\n                    <div class=\"ticker-logo\">🔍</div>\n                    <div class=\"ticker-info\"><h3>PLTR</h3><p>Palantir</p></div>\n                    <div class=\"ticker-badge\">Big Data</div>\n                </div>\n                <div class=\"ticker-card\" data-ticker=\"MSFT\">\n                    <div class=\"ticker-logo\">💻</div>\n                    <div class=\"ticker-info\"><h3>MSFT</h3><p>Microsoft</p></div>\n                    <div class=\"ticker-badge\">Cloud</div>\n                </div>\n                <div class=\"ticker-card\" data-ticker=\"GOOGL\">\n                    <div class=\"ticker-logo\">🔎</div>\n                    <div class=\"ticker-info\"><h3>GOOGL</h3><p>Alphabet</p></div>\n                    <div class=\"ticker-badge\">Search</div>\n                </div>\n                <div class=\"ticker-card\" data-ticker=\"INTC\">\n                    <div class=\"ticker-logo\">🔧</div>\n                    <div class=\"ticker-info\"><h3>INTC</h3><p>Intel Corp.</p></div>\n                    <div class=\"ticker-badge\">Semi</div>\n                </div>\n            </div>\n\n            <div class=\"tickers-cta\">\n                <p>지금 바로 텔레그램 챗봇에게 위 종목에 대한 심층 분석을 요청하세요.</p>\n                <a href=\"https://t.me/daniel8824_testing_bot\" target=\"_blank\" rel=\"noopener nofollow\" class=\"btn btn-primary\">\n                    <i class=\"fab fa-telegram-plane\"></i> 분석 요청 시작하기\n                </a>\n            </div>\n        </div>\n    </section>\n\n    <!-- Workflow Image Section -->\n    <section class=\"workflow\">\n        <div class=\"container\">\n            <div class=\"section-header\">\n                <span class=\"section-badge\">Processing Core</span>\n                <h2 class=\"section-title\">자동화된 인텔리전스</h2>\n                <p class=\"section-description\">\n                    정량 데이터 수집부터 정성 분석까지, 4단계 완전 자동화 프로세스\n                </p>\n            </div>\n            <div class=\"workflow-image-wrapper\">\n                <img src=\"https://publish-01.obsidian.md/access/384f5b99b4a72111068888340c2a7430/90_Settings/92_Attachments/financial_02.png\" alt=\"n8n Workflow - Datawave Stock Analysis\" class=\"workflow-image\">\n            </div>\n        </div>\n    </section>\n\n    <!-- Features Section (Split: Tools) -->\n    <section class=\"features\" id=\"features\">\n        <div class=\"container\">\n            <div class=\"section-header\">\n                <span class=\"section-badge\">Advanced Tools</span>\n                <h2 class=\"section-title\">첨단 분석 도구</h2>\n                <p class=\"section-description\">\n                    월스트리트 수준의 분석을 가능하게 하는 AI 기반 도구들\n                </p>\n            </div>\n\n            <div class=\"features-grid\">\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\"><i class=\"fas fa-draw-polygon\"></i></div>\n                    <h3>Chart Pattern AI</h3>\n                    <p>Chart-img API로 생성된 차트를 Vision AI가 분석하여 패턴과 매매 시점을 포착합니다.</p>\n                    <div class=\"feature-tags\">\n                        <span class=\"tag\">Vision AI</span><span class=\"tag\">Pattern</span>\n                    </div>\n                </div>\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\"><i class=\"fas fa-brain\"></i></div>\n                    <h3>Gemini Expert Agent</h3>\n                    <p>구글의 최신 Gemini 모델이 50년 경력의 월스트리트 전문가 페르소나로 종합 의견을 제시합니다.</p>\n                    <div class=\"feature-tags\">\n                        <span class=\"tag\">LLM</span><span class=\"tag\">Expert View</span>\n                    </div>\n                </div>\n                <div class=\"feature-card\">\n                    <div class=\"feature-icon\"><i class=\"fas fa-file-alt\"></i></div>\n                    <h3>Pro Report Gen</h3>\n                    <p>복잡한 분석 결과를 한눈에 파악할 수 있는 HTML 포맷의 전문 투자 보고서로 발행합니다.</p>\n                    <div class=\"feature-tags\">\n                        <span class=\"tag\">HTML</span><span class=\"tag\">JSON</span>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Data Sources Section (Split: Data) -->\n    <section class=\"sources\" id=\"sources\">\n        <div class=\"container\">\n            <div class=\"section-header\">\n                <span class=\"section-badge\">Data Engine</span>\n                <h2 class=\"section-title\">검증된 데이터 소스</h2>\n                <p class=\"section-description\">\n                    글로벌 금융 시장의 실시간 데이터를 빈틈없이 수집합니다\n                </p>\n            </div>\n\n            <div class=\"sources-grid\">\n                <div class=\"source-card\">\n                    <div class=\"source-logo\"><i class=\"fas fa-chart-bar\"></i></div>\n                    <h3>Alpha Vantage Core</h3>\n                    <p>TIME_SERIES, INCOME_STATEMENT 등 118개의 전문 금융 지표를 실시간 API로 분석합니다.</p>\n                </div>\n                <div class=\"source-card\">\n                    <div class=\"source-logo\"><i class=\"fab fa-yahoo\"></i></div>\n                    <h3>Yahoo Finance API</h3>\n                    <p>Tavily Search API를 통해 전 세계 금융 뉴스와 주가 히스토리를 정밀하게 크롤링합니다.</p>\n                </div>\n                <div class=\"source-card\">\n                    <div class=\"source-logo\"><i class=\"fas fa-newspaper\"></i></div>\n                    <h3>Investing.com Feed</h3>\n                    <p>Firecrawl 기술을 활용하여 Investing.com의 최신 시장 동향과 속보를 즉시 반영합니다.</p>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Framework Section -->\n    <section class=\"framework\" id=\"framework\">\n        <div class=\"container\">\n            <div class=\"section-header\">\n                <span class=\"section-badge\">Technical Strategy</span>\n                <h2 class=\"section-title\">10대 기술적 분석 프레임워크</h2>\n                <p class=\"section-description\">\n                    Datawave만의 독자적인 기술적 분석 알고리즘\n                </p>\n            </div>\n            <div class=\"framework-grid\">\n                <div class=\"framework-card\">\n                    <h4><i class=\"fas fa-chart-bar\"></i> Candlestick Pattern</h4>\n                    <p class=\"tag\">Trend Signal</p>\n                </div>\n                <div class=\"framework-card\">\n                    <h4><i class=\"fas fa-wave-square\"></i> MACD Oscillator</h4>\n                    <p class=\"tag\">Momentum</p>\n                </div>\n                <div class=\"framework-card\">\n                    <h4><i class=\"fas fa-chart-area\"></i> Bollinger Bands</h4>\n                    <p class=\"tag\">Volatility</p>\n                </div>\n                <div class=\"framework-card\">\n                    <h4><i class=\"fas fa-ruler-combined\"></i> Fibonacci Retracement</h4>\n                    <p class=\"tag\">Support/Resistance</p>\n                </div>\n                <div class=\"framework-card\">\n                    <h4><i class=\"fas fa-balance-scale-right\"></i> OBV Analysis</h4>\n                    <p class=\"tag\">Volume Flow</p>\n                </div>\n                <div class=\"framework-card\">\n                    <h4><i class=\"fas fa-strikethrough\"></i> Moving Averages (MA)</h4>\n                    <p class=\"tag\">Trend Line</p>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Stats -->\n    <section class=\"stats\">\n        <div class=\"container\">\n            <div class=\"stats-grid\">\n                <div class=\"stat-item\">\n                    <div class=\"stat-number\">50+</div><div class=\"stat-label\">Years Experience</div>\n                </div>\n                <div class=\"stat-item\">\n                    <div class=\"stat-number\">118</div><div class=\"stat-label\">Analysis Tools</div>\n                </div>\n                <div class=\"stat-item\">\n                    <div class=\"stat-number\">10</div><div class=\"stat-label\">Technical Indicators</div>\n                </div>\n                <div class=\"stat-item\">\n                    <div class=\"stat-number\">0.1s</div><div class=\"stat-label\">Data Latency</div>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- CTA Section -->\n    <section class=\"cta-section\" id=\"contact\">\n        <div class=\"container\">\n            <div class=\"cta-card\">\n                <h2>더 스마트하게 투자하세요</h2>\n                <p>\n                    더 이상 감에 의존하지 마세요. 데이터가 증명하는 투자를 시작하세요.<br>\n                    Datawave AI 챗봇이 당신의 개인 애널리스트가 되어드립니다.\n                </p>\n                <div class=\"cta-content\">\n                    <div class=\"qr-code-wrapper\">\n                        <img src=\"https://publish-01.obsidian.md/access/384f5b99b4a72111068888340c2a7430/90_Settings/92_Attachments/financial_01.png\" alt=\"Telegram Bot QR Code\" width=\"140\">\n                        <p style=\"margin-top: 10px; color: #000; font-size: 12px; font-weight: 700;\">SCAN TO START</p>\n                    </div>\n                    <div class=\"cta-buttons-wrapper\">\n                        <a href=\"https://t.me/daniel8824_testing_bot\" target=\"_blank\" rel=\"noopener nofollow\" class=\"btn btn-primary\" style=\"font-size: 18px; padding: 16px 40px;\">\n                            <i class=\"fab fa-telegram-plane\"></i> 텔레그램 챗봇 연결\n                        </a>\n                        <p style=\"font-size: 13px; color: var(--text-muted); margin-top: 10px;\">* 별도의 가입 절차 없이 즉시 사용 가능합니다.</p>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </section>\n\n    <!-- Footer -->\n    <footer>\n        <div class=\"container\">\n            <div class=\"footer-content\">\n                <div class=\"footer-brand\">\n                    <div class=\"footer-logo\">\n                        <span class=\"logo-icon\" style=\"margin-right: 10px;\"><i class=\"fas fa-chart-line\"></i></span>\n                        <span>Datawave AI</span>\n                    </div>\n                    <p style=\"margin-top: 20px; font-size: 14px; color: var(--text-muted); line-height: 1.6;\">\n                        NYSE & LSE 50년 경력 베테랑 분석가 페르소나<br>\n                        Google Gemini & Alpha Vantage 기술 기반\n                    </p>\n                </div>\n                <div class=\"footer-links\">\n                    <h4>플랫폼</h4>\n                    <ul>\n                        <li><a href=\"#tickers\">시장 현황</a></li>\n                        <li><a href=\"#features\">분석 도구</a></li>\n                        <li><a href=\"#framework\">투자 전략</a></li>\n                        <li><a href=\"#sources\">데이터 소스</a></li>\n                    </ul>\n                </div>\n                <div class=\"footer-links\">\n                    <h4>고객 지원</h4>\n                    <ul>\n                        <li><a href=\"#\">이용 가이드</a></li>\n                        <li><a href=\"#\">시스템 상태</a></li>\n                        <li><a href=\"#\">문의하기</a></li>\n                    </ul>\n                </div>\n                <div class=\"footer-links\">\n                    <h4>커뮤니티</h4>\n                    <div class=\"social-links\" style=\"margin-top: 10px;\">\n                        <a href=\"#\"><i class=\"fab fa-twitter\"></i></a>\n                        <a href=\"#\"><i class=\"fab fa-github\"></i></a>\n                        <a href=\"https://t.me/daniel8824_testing_bot\" target=\"_blank\" rel=\"noopener nofollow\"><i class=\"fab fa-telegram\"></i></a>\n                    </div>\n                </div>\n            </div>\n            <div class=\"footer-bottom\" style=\"margin-top: 60px; padding-top: 20px; border-top: 1px solid #222; text-align: center;\">\n                <p style=\"font-size: 13px; color: #555;\">&copy; 2025 Datawave AI. All rights reserved.</p>\n            </div>\n        </div>\n    </footer>\n\n    <!-- JavaScript -->\n    <script>\n        // Header scroll effect\n        window.addEventListener('scroll', function() {\n            const header = document.getElementById('header');\n            if (window.scrollY > 50) {\n                header.style.background = 'rgba(5, 5, 5, 0.95)';\n            } else {\n                header.style.background = 'rgba(5, 5, 5, 0.8)';\n            }\n        });\n\n        // Smooth scroll\n        document.querySelectorAll('a[href^=\"#\"]').forEach(anchor => {\n            anchor.addEventListener('click', function (e) {\n                e.preventDefault();\n                const target = document.querySelector(this.getAttribute('href'));\n                if (target) {\n                    const headerHeight = 80;\n                    const targetPosition = target.offsetTop - headerHeight;\n                    window.scrollTo({\n                        top: targetPosition,\n                        behavior: 'smooth'\n                    });\n                }\n            });\n        });\n    </script>\n</body>\n</html>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        192,
+        0
+      ],
+      "id": "8a2f1de1-ed6e-4b8a-818c-1fc1e637a884",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "path": "financial-report",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        0
+      ],
+      "id": "c648fc74-cf6c-4558-8dc4-8c188bf16e21",
+      "name": "Webhook",
+      "webhookId": "01def5cb-1d42-492d-a67c-6f6cb11a2ff8"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -816,
+        48
+      ],
+      "id": "1bcc83fb-8d70-4ea8-a216-01233217cc2f",
+      "name": "Telegram Trigger",
+      "webhookId": "94bb602b-e2c3-4eb7-9cea-c4190624a2a4",
+      "credentials": {
+        "telegramApi": {
+          "id": "JcY5NiJlV3sUpCkA",
+          "name": "Telegram Financial"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yahoo Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Investing Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Send a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alpha Vantage Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chart Tools": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Design Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Design Assistant": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Text Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Audio Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c85c3842-2f93-46b0-b41e-e67e9dacae89",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed29603280f689e433d162d6eb2f4c0ef594feb614602d9f72d06ccb3a8d3e19"
+  },
+  "id": "uqXDqvbDHNqngYIt",
+  "tags": [
+    {
+      "updatedAt": "2025-12-04T00:10:44.728Z",
+      "createdAt": "2025-12-04T00:10:44.728Z",
+      "id": "UgPWglPCWDdY6AAv",
+      "name": "에이전트 클래스"
+    }
+  ]
+}
