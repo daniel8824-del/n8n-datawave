@@ -1,0 +1,496 @@
+{
+  "name": "Agentic RAG Indexing",
+  "nodes": [
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content || $json.data || $json.text || $json.concatenated_data }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "=file_id",
+                "value": "={{ $('Object Metadata').item.json.id }}"
+              },
+              {
+                "name": "=file_name",
+                "value": "={{ $('Object Metadata').item.json.name }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "54a72277-7d1d-419a-a187-b886e1d2b294",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        800,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "chunkSize": 800,
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        800,
+        416
+      ],
+      "id": "ea6bbd3c-45bf-4ebc-b4d7-920029f98b0a",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "errorMessage": "지원하지 않는 파일 형식입니다."
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        480,
+        224
+      ],
+      "id": "822fb637-14c4-4b72-af7e-aee3d1818234",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "7f6291d9-63ed-4bf3-8a75-50ea84676be0",
+      "name": "Extract Document",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        480,
+        48
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "9cf7cdff-7281-49e5-b8cd-9f7c6dfdc156",
+      "name": "Extract PDF",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -128
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## RAG 인덱싱",
+        "height": 832,
+        "width": 1712,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -560,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "cc3ccc6e-03fe-4979-bd26-380e4d0a370e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "bucketName"
+            },
+            {
+              "name": "objectName"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -464,
+        48
+      ],
+      "id": "fc976ffa-9f73-4d85-a107-dff5111342eb",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "url": "=https://piycjlmfiqyqevfnnvwc.supabase.co/storage/v1/object/info/authenticated/{{ $json.bucketName }}/{{ $json.objectName }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "sb_secret_u0w5NOiKyYqoFS0mYA3sNA_hMItio9d"
+            },
+            {
+              "name": "apikey",
+              "value": "sb_secret_u0w5NOiKyYqoFS0mYA3sNA_hMItio9d"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -272,
+        48
+      ],
+      "id": "05f7dbf6-04ad-478f-a408-f974fcda2860",
+      "name": "Object Metadata"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://piycjlmfiqyqevfnnvwc.supabase.co/storage/v1/object/sign/{{ $json.bucket_id }}/{{ $json.name }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "sb_secret_u0w5NOiKyYqoFS0mYA3sNA_hMItio9d"
+            },
+            {
+              "name": "apikey",
+              "value": "sb_secret_u0w5NOiKyYqoFS0mYA3sNA_hMItio9d"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"expiresIn\": 3600\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -96,
+        48
+      ],
+      "id": "7f1cac8f-7e4e-47b5-bfa7-7452cc247093",
+      "name": "Object URL"
+    },
+    {
+      "parameters": {
+        "url": "=https://piycjlmfiqyqevfnnvwc.supabase.co/storage/v1{{ $json.signedURL }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        80,
+        48
+      ],
+      "id": "56ab9162-b9bd-42b6-b642-71525206dedf",
+      "name": "Object Download"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Object Metadata').item.json.content_type }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "5fe78f9b-2ff3-4adc-954e-53bfce35c142"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "b69f5605-0179-4b02-9a32-e34bb085f82d",
+                    "leftValue": "={{ $('Object Metadata').item.json.content_type }}",
+                    "rightValue": "text/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "62927e38-86a9-4252-9a84-97eb08d9c045",
+                    "leftValue": "={{ $('Object Metadata').item.json.content_type }}",
+                    "rightValue": "[\"application/msword\", \"application/vnd.openxmlformats-officedocument.wordprocessingml.document\"]",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Docs"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "looseTypeValidation": true
+        }
+      },
+      "id": "9c3f962c-af03-43d6-94ce-16dddb551f2e",
+      "name": "Object Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        256,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": "=document_records",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        48
+      ],
+      "id": "beda1290-ed63-4a24-b13f-1ec386ed720c",
+      "name": "Postgres PGVector Store",
+      "credentials": {
+        "postgres": {
+          "id": "aYsGdNEzvlEWaIlu",
+          "name": "Postgres Agentic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "BAAI/bge-m3",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        672,
+        240
+      ],
+      "id": "739864c7-4633-4cda-967b-ab18cd20a0d7",
+      "name": "Embeddings HuggingFace",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "gStRwlkkYmdsXwuH",
+          "name": "HuggingFaceApi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Document": {
+      "main": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract PDF": {
+      "main": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Object Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Object Metadata": {
+      "main": [
+        [
+          {
+            "node": "Object URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Object URL": {
+      "main": [
+        [
+          {
+            "node": "Object Download",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Object Download": {
+      "main": [
+        [
+          {
+            "node": "Object Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Object Switch": {
+      "main": [
+        [
+          {
+            "node": "Extract PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Document",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Document",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "5b8fe35b-70bf-4725-8807-dc748783c4ad",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ed29603280f689e433d162d6eb2f4c0ef594feb614602d9f72d06ccb3a8d3e19"
+  },
+  "id": "DzJY5PpzEHkx0Cp4",
+  "tags": [
+    {
+      "updatedAt": "2025-12-04T00:10:44.728Z",
+      "createdAt": "2025-12-04T00:10:44.728Z",
+      "id": "UgPWglPCWDdY6AAv",
+      "name": "에이전트 클래스"
+    }
+  ]
+}
